@@ -9,9 +9,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-/.vscode
-/.vscode.*
-/.vscode*
+.vscode/
 
 # testing
 /coverage
