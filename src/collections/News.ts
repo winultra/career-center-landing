@@ -58,6 +58,15 @@ export const News: CollectionConfig = {
       defaultValue: true,
     },
     {
+      name: 'sortOrder',
+      label: 'Порядок сортировки',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        step: 1,
+      },
+    },
+    {
       name: 'seoTitle',
       label: 'SEO Title',
       type: 'text',

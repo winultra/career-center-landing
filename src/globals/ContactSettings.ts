@@ -5,6 +5,25 @@ export const ContactSettings: GlobalConfig = {
   label: 'Контакты',
   fields: [
     {
+      name: 'title',
+      label: 'Заголовок блока',
+      type: 'text',
+      defaultValue: 'Связаться с нами',
+    },
+    {
+      name: 'description',
+      label: 'Описание блока',
+      type: 'textarea',
+      defaultValue:
+        'Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим на все интересующие вас вопросы',
+    },
+    {
+      name: 'image',
+      label: 'Изображение',
+      type: 'relationship',
+      relationTo: 'media',
+    },
+    {
       name: 'phone',
       label: 'Телефон',
       type: 'text',
@@ -20,35 +39,10 @@ export const ContactSettings: GlobalConfig = {
       type: 'text',
     },
     {
-      name: 'workingHours',
-      label: 'Часы работы',
-      type: 'text',
-    },
-    {
-      name: 'maxLink',
-      label: 'Ссылка на MAX',
-      type: 'text',
-    },
-    {
-      name: 'socials',
-      label: 'Социальные сети',
-      type: 'array',
-      minRows: 0,
-      maxRows: 10,
-      fields: [
-        {
-          name: 'label',
-          label: 'Название',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'url',
-          label: 'Ссылка',
-          type: 'text',
-          required: true,
-        },
-      ],
+      name: 'isVisible',
+      label: 'Показывать блок',
+      type: 'checkbox',
+      defaultValue: true,
     },
   ],
 }

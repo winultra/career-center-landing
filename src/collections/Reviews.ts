@@ -36,6 +36,17 @@ export const Reviews: CollectionConfig = {
       required: true,
     },
     {
+      name: 'date',
+      label: 'Дата отзыва',
+      type: 'date',
+      admin: {
+        date: {
+          pickerAppearance: 'dayOnly',
+          displayFormat: 'dd.MM.yyyy',
+        },
+      },
+    },
+    {
       name: 'sortOrder',
       label: 'Порядок сортировки',
       type: 'number',

@@ -192,6 +192,121 @@ const newsCards = [
     isVisible: true,
   },
 ]
+type LandingNewsCard = {
+  id: string | number
+  title: string
+  image: string | null
+  excerpt: string
+  content: unknown
+  publishedAt: string | null
+  sortOrder: number
+}
+
+type LandingReviewCard = {
+  id: string | number
+  name: string
+  text: string
+  source: string | null
+  sortOrder: number
+  date: string | null
+  avatar: string | null
+}
+
+type LandingHeader = {
+  logo?: string | null
+  siteTitle?: string | null
+  siteDescription?: string | null
+}
+
+type LandingFooter = {
+  logo?: string | null
+  addressTitle?: string | null
+  addressText?: string | null
+  contactTitle?: string | null
+  phone?: string | null
+  email?: string | null
+  isVisible?: boolean
+}
+
+type LandingContactSection = {
+  title?: string | null
+  description?: string | null
+  phone?: string | null
+  email?: string | null
+  address?: string | null
+  image?: string | null
+  isVisible?: boolean
+}
+
+type LandingResponse = {
+  news?: LandingNewsCard[]
+  reviews?: LandingReviewCard[]
+  header?: LandingHeader
+  footer?: LandingFooter
+  contactSection?: LandingContactSection
+}
+
+type FrontendNewsCard = {
+  id: string
+  title: string
+  image: string
+  excerpt: string
+  content: string
+  date: string
+  isVisible: boolean
+}
+
+type FrontendReviewCard = {
+  name: string
+  avatar: string
+  text: string
+  date: string
+  source: string | null
+}
+
+type FrontendHeaderInfo = {
+  logo: string
+  siteTitle: string
+  siteDescription: string
+}
+
+type FrontendFooterInfo = {
+  logo: string
+  addressTitle: string
+  addressText: string
+  contactTitle: string
+  phone: string
+  email: string
+  isVisible: boolean
+}
+
+type FrontendContactSection = {
+  title: string
+  description: string
+  phone: string
+  email: string
+  address: string
+  image: string
+  isVisible: boolean
+}
+
+function formatLandingDate(date: string | null | undefined) {
+  if (!date) return ''
+
+  const parsed = new Date(date)
+  if (Number.isNaN(parsed.getTime())) return ''
+
+  return new Intl.DateTimeFormat('ru-RU').format(parsed)
+}
+
+function normalizeLandingNewsContent(content: unknown, fallback: string) {
+  if (typeof content === 'string' && content.trim()) {
+    return content
+  }
+
+  return fallback
+}
+
 const guidanceCards = [
   {
     title: 'Курс «Профессия по призванию»',
@@ -281,6 +396,7 @@ export default function HomePage() {
   const [isNewsMobile, setIsNewsMobile] = useState(false)
   const [newsStep, setNewsStep] = useState(0)
   const [selectedNews, setSelectedNews] = useState<(typeof newsCards)[number] | null>(null)
+  const [landingData, setLandingData] = useState<LandingResponse | null>(null)
   const [contactForm, setContactForm] = useState({
     firstName: '',
     lastName: '',
@@ -391,6 +507,36 @@ useEffect(() => {
       if (autoSlideRef.current !== null) {
         window.clearInterval(autoSlideRef.current)
       }
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadLandingData = async () => {
+      try {
+        const response = await fetch('/api/public/landing', {
+          cache: 'no-store',
+        })
+
+        if (!response.ok) {
+          throw new Error(`Landing request failed with status ${response.status}`)
+        }
+
+        const data: LandingResponse = await response.json()
+
+        if (isMounted) {
+          setLandingData(data)
+        }
+      } catch (error) {
+        console.error('Failed to load landing data', error)
+      }
+    }
+
+    loadLandingData()
+
+    return () => {
+      isMounted = false
     }
   }, [])
 
@@ -514,8 +660,19 @@ const isGuidanceCardVisible = (index: number) => {
   return false
 }
 
+  const apiReviewsCards: FrontendReviewCard[] = Array.isArray(landingData?.reviews)
+    ? landingData.reviews.map((item) => ({
+        name: item.name ?? '',
+        avatar: item.avatar ?? '/images/reviews/review_1.jpg',
+        text: item.text ?? '',
+        date: formatLandingDate(item.date),
+        source: item.source ?? null,
+      }))
+    : []
+
+  const visibleReviewsCards = apiReviewsCards.length > 0 ? apiReviewsCards : reviewsCards
   const visibleReviewsCount = isReviewsMobile ? 1 : 2
-  const maxReviewsIndex = Math.max(reviewsCards.length - visibleReviewsCount, 0)
+  const maxReviewsIndex = Math.max(visibleReviewsCards.length - visibleReviewsCount, 0)
 
   const resetReviewsAutoSlide = () => {
     if (reviewsAutoSlideRef.current !== null) {
@@ -537,7 +694,52 @@ const isGuidanceCardVisible = (index: number) => {
     resetReviewsAutoSlide()
   }
 
-  const visibleNewsCards = newsCards.filter((card) => card.isVisible)
+  const apiNewsCards: FrontendNewsCard[] = Array.isArray(landingData?.news)
+    ? landingData.news.map((item) => ({
+        id: String(item.id),
+        title: item.title ?? '',
+        image: item.image ?? '/images/news/news_1.jpg',
+        excerpt: item.excerpt ?? '',
+        content: normalizeLandingNewsContent(item.content, item.excerpt ?? ''),
+        date: formatLandingDate(item.publishedAt),
+        isVisible: true,
+      }))
+    : []
+
+  const visibleNewsCards = (apiNewsCards.length > 0 ? apiNewsCards : newsCards).filter(
+    (card) => card.isVisible,
+  )
+
+  const resolvedHeaderInfo: FrontendHeaderInfo = {
+    logo: landingData?.header?.logo ?? '/logo/logo.png',
+    siteTitle: landingData?.header?.siteTitle ?? 'ПрофСтарт',
+    siteDescription:
+      landingData?.header?.siteDescription ??
+      'Центр карьеры, профориентации и предпринимательства для подростков, родителей, молодёжи и начинающих предпринимателей.',
+  }
+
+  const resolvedFooterInfo: FrontendFooterInfo = {
+    logo: landingData?.footer?.logo ?? footerInfo.logo,
+    addressTitle: landingData?.footer?.addressTitle ?? footerInfo.addressTitle,
+    addressText: landingData?.footer?.addressText ?? footerInfo.addressText,
+    contactTitle: landingData?.footer?.contactTitle ?? footerInfo.contactTitle,
+    phone: landingData?.footer?.phone ?? footerInfo.phone,
+    email: landingData?.footer?.email ?? footerInfo.email,
+    isVisible: landingData?.footer?.isVisible ?? true,
+  }
+
+  const resolvedContactSection: FrontendContactSection = {
+    title: landingData?.contactSection?.title ?? 'Связаться с нами',
+    description:
+      landingData?.contactSection?.description ??
+      'Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим на все интересующие вас вопросы',
+    phone: landingData?.contactSection?.phone ?? resolvedFooterInfo.phone,
+    email: landingData?.contactSection?.email ?? resolvedFooterInfo.email,
+    address: landingData?.contactSection?.address ?? resolvedFooterInfo.addressText,
+    image: landingData?.contactSection?.image ?? '/images/сontact_as.png',
+    isVisible: landingData?.contactSection?.isVisible ?? true,
+  }
+
   const visibleNewsCount = isNewsMobile ? 1 : 3
   const maxNewsIndex = Math.max(visibleNewsCards.length - visibleNewsCount, 0)
 
@@ -625,7 +827,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       <header className="site-header">
         <div className="container site-header__inner">
           <a href="#hero" className="site-logo">
-            <img src="/logo/logo.png" alt="ПрофСтарт" className="site-logo__image" />
+            <img
+              src={resolvedHeaderInfo.logo}
+              alt={resolvedHeaderInfo.siteTitle}
+              className="site-logo__image"
+            />
           </a>
 
           <nav className="site-nav" aria-label="Основное меню">
@@ -1043,7 +1249,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                     willChange: 'transform',
                   }}
                 >
-                  {reviewsCards.map((review) => (
+                  {visibleReviewsCards.map((review) => (
                     <article
                       key={`${review.name}-${review.date}`}
                       className="review-card"
@@ -1190,28 +1396,26 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         </div>
       ) : null}
 
+      {resolvedContactSection.isVisible ? (
       <section id="contact-form" className="contact-section">
   <div className="section-side-decor section-side-decor--contact-right" aria-hidden="true" />
 
   <div className="container">
     <div className="contact-section__grid">
       <div className="contact-section__visual">
-        <h2 className="contact-section__title">Связаться с нами</h2>
+        <h2 className="contact-section__title">{resolvedContactSection.title}</h2>
 
         <div className="contact-section__image-wrap" aria-hidden="true">
           <img
-            src="/images/сontact_as.png"
-            alt="сontact_as"
+            src={resolvedContactSection.image}
+            alt="Контакты"
             className="contact-section__image"
           />
         </div>
       </div>
 
       <div className="contact-section__content">
-        <p className="contact-section__lead">
-          Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим
-          на все интересующие вас вопросы
-        </p>
+        <p className="contact-section__lead">{resolvedContactSection.description}</p>
 
         <form className="contact-form" onSubmit={handleContactSubmit}>
           <input type="hidden" name="sourceBlock" value="contact-form" />
@@ -1304,36 +1508,39 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     </div>
   </div>
 </section>
+      ) : null}
+      {resolvedFooterInfo.isVisible ? (
       <footer className="site-footer">
         <div className="container site-footer__inner">
           <a href="#hero" className="site-footer__logo" aria-label="ПрофСтарт — наверх страницы">
-            <img src={footerInfo.logo} alt="ПрофСтарт" className="site-footer__logo-image" />
+            <img src={resolvedFooterInfo.logo} alt="ПрофСтарт" className="site-footer__logo-image" />
           </a>
 
           <div className="site-footer__info">
             <div className="site-footer__column">
-              <p className="site-footer__label">{footerInfo.addressTitle}</p>
-              <p className="site-footer__text">{footerInfo.addressText}</p>
+              <p className="site-footer__label">{resolvedFooterInfo.addressTitle}</p>
+              <p className="site-footer__text">{resolvedFooterInfo.addressText}</p>
             </div>
 
             <div className="site-footer__column">
-              <p className="site-footer__label">{footerInfo.contactTitle}</p>
+              <p className="site-footer__label">{resolvedFooterInfo.contactTitle}</p>
               <a
-                href={`tel:${footerInfo.phone.replace(/[^\d+]/g, '')}`}
+                href={`tel:${resolvedFooterInfo.phone.replace(/[^\d+]/g, '')}`}
                 className="site-footer__link"
               >
-                {footerInfo.phone}
+                {resolvedFooterInfo.phone}
               </a>
               <a
-                href={`mailto:${footerInfo.email}`}
+                href={`mailto:${resolvedFooterInfo.email}`}
                 className="site-footer__link"
               >
-                {footerInfo.email}
+                {resolvedFooterInfo.email}
               </a>
             </div>
           </div>
         </div>
       </footer>
+      ) : null}
       <button
   type="button"
   className={`back-to-top ${isBackToTopVisible ? 'back-to-top--visible' : ''}`}
