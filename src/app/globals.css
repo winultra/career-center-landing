@@ -1510,9 +1510,9 @@ textarea {
 
 .entrepreneurship-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-  max-width: 528px;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 920px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -2661,7 +2661,7 @@ textarea {
   }
 
   .entrepreneurship-grid {
-    max-width: 528px;
+    max-width: 760px;
   }
 
   .reviews-slider__track {
@@ -3469,6 +3469,7 @@ textarea {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: -webkit-radial-gradient(white, black);
   }
   .guidance-card__head {
     min-height: 124px;

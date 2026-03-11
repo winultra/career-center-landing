@@ -1850,7 +1850,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <article
             key={isLandingDataLoading ? `entrepreneurship-skeleton-${index}` : `${card.title}-${index}`}
             className={`entrepreneurship-card ${
-              !isLandingDataLoading && index === 1 ? 'entrepreneurship-card--featured' : ''
+              !isLandingDataLoading && index === 1 ? '' : ''
             } ${isLandingDataLoading ? 'entrepreneurship-card--skeleton' : ''}`}
             aria-hidden={isLandingDataLoading ? 'true' : undefined}
           >
