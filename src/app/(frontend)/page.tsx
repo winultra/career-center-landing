@@ -70,7 +70,7 @@ const featureCards = [
 const bannerSlides = [
   {
     image: '/images/banners/baner1.png',
-    href: '#contact-form',
+    href: undefined,
   },
   {
     image: '/images/banners/baner2.png',
