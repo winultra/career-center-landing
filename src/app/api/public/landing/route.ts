@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const payload = await getPayloadClient()
 
-    const [newsResult, reviewsResult, headerResult, footerResult, contactSettingsResult] =
+    const [newsResult, reviewsResult, headerResult, footerResult, contactSettingsResult, homePageResult] =
       await Promise.all([
         payload.find({
           collection: 'news',
@@ -42,6 +42,10 @@ export async function GET() {
           slug: 'contact-settings',
           depth: 1,
         }),
+        payload.findGlobal({
+          slug: 'home-page',
+          depth: 2,
+        }),
       ])
 
     const news = (newsResult.docs ?? []).map((item: any) => ({
@@ -74,6 +78,94 @@ export async function GET() {
         siteDescription:
           headerResult?.siteDescription ??
           'Центр карьеры, профориентации и предпринимательства для подростков, родителей, молодёжи и начинающих предпринимателей.',
+      },
+      hero: {
+        title: homePageResult?.hero?.title ?? null,
+        subtitle: homePageResult?.hero?.subtitle ?? null,
+        buttonText: homePageResult?.hero?.buttonText ?? 'Оставить заявку',
+        buttonLink: homePageResult?.hero?.buttonLink ?? '#contact-form',
+        image: homePageResult?.hero?.image?.url ?? null,
+        isVisible: homePageResult?.hero?.isVisible ?? true,
+      },
+      introSlider: {
+        title: homePageResult?.introSlider?.title ?? null,
+        slides: Array.isArray(homePageResult?.introSlider?.slides)
+                ? homePageResult.introSlider.slides.map((item: any) => ({
+                    id: item.id,
+                    title: item.title ?? '',
+                    text: item.text ?? '',
+                    image: item.image?.url ?? null,
+        }))
+        : [],
+      },
+      about: {
+        title: homePageResult?.about?.title ?? null,
+        text: homePageResult?.about?.text ?? null,
+        image: homePageResult?.about?.image?.url ?? null,
+        isVisible: homePageResult?.about?.isVisible ?? true,
+      },
+      audience: {
+        title: homePageResult?.audience?.title ?? null,
+        isVisible: homePageResult?.audience?.isVisible ?? true,
+        items: Array.isArray(homePageResult?.audience?.items)
+          ? homePageResult.audience.items.map((item: any) => ({
+              id: item.id,
+              title: item.title ?? '',
+              points: Array.isArray(item.points)
+                ? item.points
+                    .map((point: any) => point?.text?.trim() ?? '')
+                    .filter(Boolean)
+                : [],
+              buttonText: item.buttonText ?? 'Оставить заявку',
+              buttonLink: item.buttonLink ?? '#contact-form',
+            }))
+          : [],
+      },
+      careerGuidance: {
+        title: homePageResult?.careerGuidance?.title ?? null,
+        isVisible: homePageResult?.careerGuidance?.isVisible ?? true,
+        items: Array.isArray(homePageResult?.careerGuidance?.items)
+          ? homePageResult.careerGuidance.items.map((item: any) => ({
+              id: item.id,
+              title: item.title ?? '',
+              price: item.price ?? '',
+              points: Array.isArray(item.points)
+                ? item.points
+                    .map((point: any) => point?.text?.trim() ?? '')
+                    .filter(Boolean)
+                : [],
+              buttonText: item.buttonText ?? 'Купить',
+              buttonLink: item.buttonLink ?? '#contact-form',
+            }))
+          : [],
+      },
+      cta: {
+        title: homePageResult?.cta?.title ?? null,
+        text: homePageResult?.cta?.text ?? null,
+        buttonText: homePageResult?.cta?.buttonText ?? 'Оставить заявку',
+        buttonLink: homePageResult?.cta?.buttonLink ?? '#contact-form',
+        managerText: homePageResult?.cta?.managerText ?? 'или написать:',
+        managerLink: homePageResult?.cta?.managerLink ?? '#contact-form',
+        managerIcon: homePageResult?.cta?.managerIcon?.url ?? null,
+        isVisible: homePageResult?.cta?.isVisible ?? true,
+      },
+      entrepreneurship: {
+        title: homePageResult?.entrepreneurship?.title ?? null,
+        isVisible: homePageResult?.entrepreneurship?.isVisible ?? true,
+        items: Array.isArray(homePageResult?.entrepreneurship?.items)
+          ? homePageResult.entrepreneurship.items.map((item: any) => ({
+              id: item.id,
+              title: item.title ?? '',
+              price: item.price ?? '',
+              points: Array.isArray(item.points)
+                ? item.points
+                    .map((point: any) => point?.text?.trim() ?? '')
+                    .filter(Boolean)
+                : [],
+              buttonText: item.buttonText ?? 'Купить',
+              buttonLink: item.buttonLink ?? '#contact-form',
+            }))
+          : [],
       },
       footer: {
         logo: footerResult?.logo?.url ?? null,

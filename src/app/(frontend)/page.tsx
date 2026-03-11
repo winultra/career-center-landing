@@ -8,6 +8,33 @@ const navItems = [
   { href: '#consultations', label: 'Консультация' },
   { href: '#news', label: 'Новости' },
 ]
+const mobileMenuItems = [
+  {
+    href: '#about',
+    label: 'О центре',
+    iconClass: 'mobile-menu__icon mobile-menu__icon--about',
+  },
+  {
+    href: '#guidance',
+    label: 'Профориентация',
+    iconClass: 'mobile-menu__icon mobile-menu__icon--guidance',
+  },
+  {
+    href: '#entrepreneurship',
+    label: 'Предпринимательство',
+    iconClass: 'mobile-menu__icon mobile-menu__icon--entrepreneurship',
+  },
+  {
+    href: '#consultations',
+    label: 'Консультация',
+    iconClass: 'mobile-menu__icon mobile-menu__icon--consultations',
+  },
+  {
+    href: '#news',
+    label: 'Новости',
+    iconClass: 'mobile-menu__icon mobile-menu__icon--news',
+  },
+] as const
 const footerInfo = {
   logo: '/logo/footer-logo.png',
   addressTitle: 'Адрес',
@@ -218,6 +245,88 @@ type LandingHeader = {
   siteDescription?: string | null
 }
 
+type LandingHero = {
+  title?: string | null
+  subtitle?: string | null
+  buttonText?: string | null
+  buttonLink?: string | null
+  image?: string | null
+  isVisible?: boolean
+}
+type LandingIntroSlide = {
+  id?: string | number
+  title?: string | null
+  text?: string | null
+  image?: string | null
+}
+type LandingIntroSlider = {
+  title?: string | null
+  slides?: LandingIntroSlide[]
+}
+
+type LandingAbout = {
+  title?: string | null
+  text?: string | null
+  image?: string | null
+  isVisible?: boolean
+}
+
+type LandingAudienceItem = {
+  id?: string | number
+  title?: string | null
+  points?: string[]
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
+type LandingAudience = {
+  title?: string | null
+  isVisible?: boolean
+  items?: LandingAudienceItem[]
+}
+
+type LandingCareerGuidanceItem = {
+  id?: string | number
+  title?: string | null
+  price?: string | null
+  points?: string[]
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
+
+type LandingCareerGuidance = {
+  title?: string | null
+  isVisible?: boolean
+  items?: LandingCareerGuidanceItem[]
+}
+
+type LandingCta = {
+  title?: string | null
+  text?: string | null
+  buttonText?: string | null
+  buttonLink?: string | null
+  managerText?: string | null
+  managerLink?: string | null
+  managerIcon?: string | null
+  isVisible?: boolean
+}
+
+type LandingEntrepreneurshipItem = {
+  id?: string | number
+  title?: string | null
+  price?: string | null
+  points?: string[]
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
+type LandingEntrepreneurship = {
+  title?: string | null
+  isVisible?: boolean
+  items?: LandingEntrepreneurshipItem[]
+}
+
 type LandingFooter = {
   logo?: string | null
   addressTitle?: string | null
@@ -242,6 +351,13 @@ type LandingResponse = {
   news?: LandingNewsCard[]
   reviews?: LandingReviewCard[]
   header?: LandingHeader
+  hero?: LandingHero
+  introSlider?: LandingIntroSlider
+  about?: LandingAbout
+  audience?: LandingAudience
+  careerGuidance?: LandingCareerGuidance
+  cta?: LandingCta
+  entrepreneurship?: LandingEntrepreneurship
   footer?: LandingFooter
   contactSection?: LandingContactSection
 }
@@ -268,6 +384,77 @@ type FrontendHeaderInfo = {
   logo: string
   siteTitle: string
   siteDescription: string
+}
+
+type FrontendHeroInfo = {
+  title: string
+  subtitle: string
+  buttonText: string
+  buttonLink: string
+  image: string
+  isVisible: boolean
+}
+type FrontendBannerSlide = {
+  image: string
+  href?: string
+}
+type FrontendAboutInfo = {
+  title: string
+  text: string
+  image: string
+  isVisible: boolean
+}
+
+type FrontendAudienceCard = {
+  title: string
+  items: string[]
+  buttonText: string
+  buttonLink: string
+}
+
+type FrontendAudienceInfo = {
+  title: string
+  isVisible: boolean
+  items: FrontendAudienceCard[]
+}
+
+type FrontendGuidanceCard = {
+  title: string
+  price: string
+  items: string[]
+  buttonText: string
+  buttonLink: string
+}
+
+
+type FrontendCareerGuidanceInfo = {
+  title: string
+  isVisible: boolean
+  items: FrontendGuidanceCard[]
+}
+
+type FrontendCtaInfo = {
+  title: string
+  text: string
+  buttonText: string
+  buttonLink: string
+  managerText: string
+  managerLink: string
+  managerIcon: string
+  isVisible: boolean
+}
+type FrontendEntrepreneurshipCard = {
+  title: string
+  price: string
+  items: string[]
+  buttonText: string
+  buttonLink: string
+}
+
+type FrontendEntrepreneurshipInfo = {
+  title: string
+  isVisible: boolean
+  items: FrontendEntrepreneurshipCard[]
 }
 
 type FrontendFooterInfo = {
@@ -306,6 +493,47 @@ function normalizeLandingNewsContent(content: unknown, fallback: string) {
 
   return fallback
 }
+function normalizePrice(value: string | null | undefined) {
+  const normalized = typeof value === 'string' ? value.trim() : ''
+
+  if (!normalized) {
+    return ''
+  }
+
+  return /₽|руб\.?/i.test(normalized) ? normalized : `${normalized} ₽`
+}
+function renderHeroTitle(title: string) {
+  const normalizedTitle = title.trim().replace(/\s+/g, ' ')
+
+  if (normalizedTitle === 'ВАШ ПУТЕВОДИТЕЛЬ В МИР КАРЬЕРНЫХ РЕШЕНИЙ') {
+    return (
+      <>
+        <span className="hero-title__muted">ВАШ</span>{' '}
+        <span className="hero-title__blue">ПУТЕВОДИТЕЛЬ В МИР</span>{' '}
+        <span className="hero-title__muted">КАРЬЕРНЫХ</span>{' '}
+        <span className="hero-title__blue">РЕШЕНИЙ</span>
+      </>
+    )
+  }
+
+  const customParts = title
+    .split('|')
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  if (customParts.length === 4) {
+    return (
+      <>
+        <span className="hero-title__muted">{customParts[0]}</span>{' '}
+        <span className="hero-title__blue">{customParts[1]}</span>{' '}
+        <span className="hero-title__muted">{customParts[2]}</span>{' '}
+        <span className="hero-title__blue">{customParts[3]}</span>
+      </>
+    )
+  }
+
+  return title
+}
 
 const guidanceCards = [
   {
@@ -317,6 +545,8 @@ const guidanceCards = [
       'Ориентируется в современном рынке труда;',
       'Развивает навыки, которые нужны в жизни и карьере;',
     ],
+    buttonText: 'Купить',
+    buttonLink: '#contact-form',
   },
   {
     title: 'Подростковый профориентационный клуб «ПрофСтарт»',
@@ -326,6 +556,8 @@ const guidanceCards = [
       'Учатся планировать доходы и расходы;',
       'Разбираются, что такое бюджет, цели, накопления;',
     ],
+    buttonText: 'Купить',
+    buttonLink: '#contact-form',
   },
   {
     title: 'ПрофТур',
@@ -335,6 +567,8 @@ const guidanceCards = [
       'Знакомятся с разными профессиями «изнутри»;',
       'Общаются с действующими специалистами и руководителями;',
     ],
+    buttonText: 'Купить',
+    buttonLink: '#contact-form',
   },
   {
     title: 'Подростковый профориентационный клуб «ПрофСтарт+»',
@@ -344,6 +578,8 @@ const guidanceCards = [
       'Расширенные упражнения по выбору направления;',
       'Поддержка в формировании индивидуального карьерного трека;',
     ],
+    buttonText: 'Купить',
+    buttonLink: '#contact-form',
   },
   {
     title: 'Подростковый профориентационный клуб «ПрофСтарт Pro»',
@@ -353,7 +589,14 @@ const guidanceCards = [
       'Построение персонального маршрута развития;',
       'Дополнительные встречи и сопровождение по результатам;',
     ],
+    buttonText: 'Купить',
+    buttonLink: '#contact-form',
   },
+]
+const guidanceLoopCards = [
+  ...guidanceCards.slice(-3),
+  ...guidanceCards,
+  ...guidanceCards.slice(0, 3),
 ]
 
 function renderHighlightedWords(text: string, words: string[]) {
@@ -395,8 +638,9 @@ export default function HomePage() {
   const [newsIndex, setNewsIndex] = useState(0)
   const [isNewsMobile, setIsNewsMobile] = useState(false)
   const [newsStep, setNewsStep] = useState(0)
-  const [selectedNews, setSelectedNews] = useState<(typeof newsCards)[number] | null>(null)
+  const [selectedNews, setSelectedNews] = useState<FrontendNewsCard | null>(null)
   const [landingData, setLandingData] = useState<LandingResponse | null>(null)
+  const [isLandingDataLoading, setIsLandingDataLoading] = useState(true)
   const [contactForm, setContactForm] = useState({
     firstName: '',
     lastName: '',
@@ -407,28 +651,26 @@ export default function HomePage() {
     company: '',
   })
   const [isContactSubmitting, setIsContactSubmitting] = useState(false)
+  const [contactSubmitState, setContactSubmitState] = useState<{
+    type: 'idle' | 'success' | 'error'
+    message: string
+  }>({
+    type: 'idle',
+    message: '',
+  })
   const [isBackToTopVisible, setIsBackToTopVisible] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const autoSlideRef = useRef<number | null>(null)
   const reviewsAutoSlideRef = useRef<number | null>(null)
   const reviewsViewportRef = useRef<HTMLDivElement | null>(null)
   const newsViewportRef = useRef<HTMLDivElement | null>(null)
-  const guidanceLoopCards = [
-  ...guidanceCards.slice(-3),
-  ...guidanceCards,
-  ...guidanceCards.slice(0, 3),
-]
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1040px)')
     const sync = () => setIsReviewsMobile(media.matches)
     sync()
 
-    if (typeof media.addEventListener === 'function') {
-      media.addEventListener('change', sync)
-      return () => media.removeEventListener('change', sync)
-    }
-
-    media.addListener(sync)
-    return () => media.removeListener(sync)
+    media.addEventListener('change', sync)
+    return () => media.removeEventListener('change', sync)
   }, [])
 
   useEffect(() => {
@@ -436,13 +678,8 @@ export default function HomePage() {
     const sync = () => setIsNewsMobile(media.matches)
     sync()
 
-    if (typeof media.addEventListener === 'function') {
-      media.addEventListener('change', sync)
-      return () => media.removeEventListener('change', sync)
-    }
-
-    media.addListener(sync)
-    return () => media.removeListener(sync)
+    media.addEventListener('change', sync)
+    return () => media.removeEventListener('change', sync)
   }, [])
 
 useEffect(() => {
@@ -489,67 +726,47 @@ useEffect(() => {
     }
   }, [isNewsMobile])
 
+useEffect(() => {
+  let isMounted = true
 
-  useEffect(() => {
-    const startAutoSlide = () => {
-      if (autoSlideRef.current !== null) {
-        window.clearInterval(autoSlideRef.current)
+  const loadLandingData = async () => {
+    try {
+      const response = await fetch('/api/public/landing', {
+        cache: 'no-store',
+      })
+
+      if (!response.ok) {
+        throw new Error(`Landing request failed with status ${response.status}`)
       }
 
-      autoSlideRef.current = window.setInterval(() => {
-        setActiveBanner((prev) => (prev + 1) % bannerSlides.length)
-      }, 4500)
-    }
+      const data: LandingResponse = await response.json()
 
-    startAutoSlide()
-
-    return () => {
-      if (autoSlideRef.current !== null) {
-        window.clearInterval(autoSlideRef.current)
+      if (isMounted) {
+        setLandingData(data)
+      }
+    } catch (error) {
+      console.error('Failed to load landing data', error)
+    } finally {
+      if (isMounted) {
+        setIsLandingDataLoading(false)
       }
     }
-  }, [])
+  }
 
-  useEffect(() => {
-    let isMounted = true
+  loadLandingData()
 
-    const loadLandingData = async () => {
-      try {
-        const response = await fetch('/api/public/landing', {
-          cache: 'no-store',
-        })
-
-        if (!response.ok) {
-          throw new Error(`Landing request failed with status ${response.status}`)
-        }
-
-        const data: LandingResponse = await response.json()
-
-        if (isMounted) {
-          setLandingData(data)
-        }
-      } catch (error) {
-        console.error('Failed to load landing data', error)
-      }
-    }
-
-    loadLandingData()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
+  return () => {
+    isMounted = false
+  }
+}, [])
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 720px)')
     const sync = () => setIsGuidanceMobile(media.matches)
     sync()
-    if (typeof media.addEventListener === 'function') {
-      media.addEventListener('change', sync)
-      return () => media.removeEventListener('change', sync)
-    }
-    media.addListener(sync)
-    return () => media.removeListener(sync)
+
+    media.addEventListener('change', sync)
+    return () => media.removeEventListener('change', sync)
   }, [])
 
   useEffect(() => {
@@ -670,7 +887,8 @@ const isGuidanceCardVisible = (index: number) => {
       }))
     : []
 
-  const visibleReviewsCards = apiReviewsCards.length > 0 ? apiReviewsCards : reviewsCards
+  const visibleReviewsCards =
+  !isLandingDataLoading && apiReviewsCards.length > 0 ? apiReviewsCards : reviewsCards
   const visibleReviewsCount = isReviewsMobile ? 1 : 2
   const maxReviewsIndex = Math.max(visibleReviewsCards.length - visibleReviewsCount, 0)
 
@@ -706,9 +924,9 @@ const isGuidanceCardVisible = (index: number) => {
       }))
     : []
 
-  const visibleNewsCards = (apiNewsCards.length > 0 ? apiNewsCards : newsCards).filter(
-    (card) => card.isVisible,
-  )
+  const visibleNewsCards = (
+    !isLandingDataLoading && apiNewsCards.length > 0 ? apiNewsCards : newsCards
+  ).filter((card) => card.isVisible)
 
   const resolvedHeaderInfo: FrontendHeaderInfo = {
     logo: landingData?.header?.logo ?? '/logo/logo.png',
@@ -718,6 +936,223 @@ const isGuidanceCardVisible = (index: number) => {
       'Центр карьеры, профориентации и предпринимательства для подростков, родителей, молодёжи и начинающих предпринимателей.',
   }
 
+  const resolvedHeroInfo: FrontendHeroInfo = {
+    title: landingData?.hero?.title ?? 'ВАШ ПУТЕВОДИТЕЛЬ В МИР КАРЬЕРНЫХ РЕШЕНИЙ',
+    subtitle:
+      landingData?.hero?.subtitle ??
+      'Пространство для подростков, родителей, молодёжи и начинающих предпринимателей.',
+    buttonText: landingData?.hero?.buttonText ?? 'Связаться с нами',
+    buttonLink: landingData?.hero?.buttonLink ?? '#contact-form',
+    image: landingData?.hero?.image ?? '/images/image_1.png',
+    isVisible: landingData?.hero?.isVisible ?? true,
+  }
+
+  const resolvedBannerSlides: FrontendBannerSlide[] =
+  !isLandingDataLoading &&
+  Array.isArray(landingData?.introSlider?.slides) &&
+  landingData.introSlider.slides.length > 0
+    ? landingData.introSlider.slides.map((slide) => ({
+        image: slide.image ?? '/images/banners/baner1.png',
+        href: '#contact-form',
+      }))
+    : bannerSlides
+  const bannerSlideCount = resolvedBannerSlides.length
+  const resolvedAboutInfo: FrontendAboutInfo = {
+    title: landingData?.about?.title ?? 'О нас',
+    text:
+    landingData?.about?.text ??
+    'Сегодня мир меняется быстрее, чем школьные программы, учебники и привычные карьерные сценарии. Профессии появляются и исчезают.\n\nКарьерные пути больше не выглядят как прямая линия «школа — вуз — работа на всю жизнь». А выбор, который раньше делали один раз, теперь приходится пересобирать снова и снова.\n\nИменно в этой реальности появился центр карьеры, профориентации и предпринимательства «Проф Старт».\n\nМы работаем не только с подростками. Мы работаем с людьми и их выбором — в разном возрасте и на разных этапах жизни.',
+    image: landingData?.about?.image ?? '/images/image_2.jpg',
+    isVisible: landingData?.about?.isVisible ?? true,
+  }
+
+  const resolvedAudienceInfo: FrontendAudienceInfo = {
+    title: landingData?.audience?.title ?? 'Для кого работает центр ПрофСтарт?',
+    isVisible: landingData?.audience?.isVisible ?? true,
+    items:
+      !isLandingDataLoading && Array.isArray(landingData?.audience?.items) && landingData.audience.items.length > 0
+        ? landingData.audience.items.slice(0, 3).map((item) => ({
+            title: item.title ?? '',
+            items: Array.isArray(item.points) ? item.points.slice(0, 5) : [],
+            buttonText: item.buttonText ?? 'Оставить заявку',
+            buttonLink: item.buttonLink ?? '#contact-form',
+          }))
+        : audienceCards.map((item) => ({
+            title: item.title,
+            items: item.items,
+            buttonText: 'Оставить заявку',
+            buttonLink: '#contact-form',
+          })),
+  }
+
+  const resolvedCareerGuidanceInfo: FrontendCareerGuidanceInfo = {
+    title: landingData?.careerGuidance?.title ?? 'Профориентация',
+    isVisible: landingData?.careerGuidance?.isVisible ?? true,
+    items:
+      !isLandingDataLoading &&
+      Array.isArray(landingData?.careerGuidance?.items) &&
+      landingData.careerGuidance.items.length > 0
+        ? landingData.careerGuidance.items.slice(0, 20).map((item) => ({
+            title: item.title ?? '',
+            price: normalizePrice(item.price),
+            items: Array.isArray(item.points) ? item.points.slice(0, 6) : [],
+            buttonText: item.buttonText ?? 'Купить',
+            buttonLink: item.buttonLink ?? '#contact-form',
+          }))
+        : guidanceCards.map((item) => ({
+            title: item.title,
+            price: item.price,
+            items: item.items,
+            buttonText: 'Купить',
+            buttonLink: '#contact-form',
+          })),
+  }
+
+  const resolvedCtaInfo: FrontendCtaInfo = {
+    title: landingData?.cta?.title ?? 'Есть вопросы или сложности с выбором?',
+    text:
+      landingData?.cta?.text ??
+      'Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим на все интересующие вас вопросы',
+    buttonText: landingData?.cta?.buttonText ?? 'Отправить заявку',
+    buttonLink: landingData?.cta?.buttonLink ?? '#contact-form',
+    managerText: landingData?.cta?.managerText ?? 'или написать:',
+    managerLink: landingData?.cta?.managerLink ?? '#contact-form',
+    managerIcon: landingData?.cta?.managerIcon ?? '/images/logo_max.png',
+    isVisible: landingData?.cta?.isVisible ?? true,
+  }
+
+  const resolvedEntrepreneurshipInfo: FrontendEntrepreneurshipInfo = {
+    title: landingData?.entrepreneurship?.title ?? 'Предпринимательство',
+    isVisible: landingData?.entrepreneurship?.isVisible ?? true,
+    items:
+      !isLandingDataLoading &&
+      Array.isArray(landingData?.entrepreneurship?.items) &&
+      landingData.entrepreneurship.items.length > 0
+        ? landingData.entrepreneurship.items.slice(0, 3).map((item) => ({
+            title: item.title ?? '',
+            price: normalizePrice(item.price),
+            items: Array.isArray(item.points) ? item.points.slice(0, 5) : [],
+            buttonText: item.buttonText ?? 'Купить',
+            buttonLink: item.buttonLink ?? '#contact-form',
+          }))
+        : [
+            {
+              title: 'Подготовка и запуск бизнеса',
+              price: '25 000 ₽',
+              items: [
+                'Анализируем и оцениваем бизнес-идею',
+                'Изучаем рынок и целевую аудиторию',
+                'Рассчитываем стартовые вложения и финансовую модель',
+                'Формируем или корректируем бизнес-план',
+                'Помогаем определить первые шаги запуска',
+              ],
+              buttonText: 'Купить',
+              buttonLink: '#contact-form',
+            },
+            {
+              title: 'Бизнес-консультации',
+              price: '5 000 ₽',
+              items: [
+                'Тем, кто хочет открыть своё дело, но не знает, с чего начать',
+                'Тем, кто планирует получить государственную поддержку',
+                'Тем, кто уже работает, но чувствует хаос в финансах или стратегии',
+                'Помогаем структурировать действия и первые приоритеты',
+              ],
+              buttonText: 'Купить',
+              buttonLink: '#contact-form',
+            },
+          ],
+  }
+
+  const entrepreneurshipRenderCards: FrontendEntrepreneurshipCard[] = isLandingDataLoading
+    ? [
+        {
+          title: '',
+          price: '',
+          items: [],
+          buttonText: '',
+          buttonLink: '',
+        },
+        {
+          title: '',
+          price: '',
+          items: [],
+          buttonText: '',
+          buttonLink: '',
+        },
+      ]
+    : resolvedEntrepreneurshipInfo.items
+
+  const resolvedGuidanceLoopCards = isLandingDataLoading
+    ? guidanceLoopCards
+    : [
+        ...resolvedCareerGuidanceInfo.items.slice(-3),
+        ...resolvedCareerGuidanceInfo.items,
+        ...resolvedCareerGuidanceInfo.items.slice(0, 3),
+      ]
+
+useEffect(() => {
+  if (bannerSlideCount <= 1) {
+    if (autoSlideRef.current !== null) {
+      window.clearInterval(autoSlideRef.current)
+    }
+    return
+  }
+
+  const startAutoSlide = () => {
+    if (autoSlideRef.current !== null) {
+      window.clearInterval(autoSlideRef.current)
+    }
+
+    autoSlideRef.current = window.setInterval(() => {
+      setActiveBanner((prev) => (prev + 1) % bannerSlideCount)
+    }, 4500)
+  }
+
+  startAutoSlide()
+
+  return () => {
+    if (autoSlideRef.current !== null) {
+      window.clearInterval(autoSlideRef.current)
+    }
+  }
+}, [bannerSlideCount])
+
+useEffect(() => {
+  setActiveBanner((prev) => (bannerSlideCount > 0 ? Math.min(prev, bannerSlideCount - 1) : 0))
+}, [bannerSlideCount])
+
+useEffect(() => {
+  if (!isMobileMenuOpen) {
+    document.body.style.overflow = ''
+    return
+  }
+
+  document.body.style.overflow = 'hidden'
+
+  return () => {
+    document.body.style.overflow = ''
+  }
+}, [isMobileMenuOpen])
+
+useEffect(() => {
+  const media = window.matchMedia('(min-width: 1041px)')
+
+  const handleDesktop = () => {
+    if (media.matches) {
+      setIsMobileMenuOpen(false)
+    }
+  }
+
+  handleDesktop()
+
+  media.addEventListener('change', handleDesktop)
+  return () => media.removeEventListener('change', handleDesktop)
+}, [])
+
+const closeMobileMenu = () => {
+  setIsMobileMenuOpen(false)
+}
   const resolvedFooterInfo: FrontendFooterInfo = {
     logo: landingData?.footer?.logo ?? footerInfo.logo,
     addressTitle: landingData?.footer?.addressTitle ?? footerInfo.addressTitle,
@@ -790,10 +1225,66 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     company: '',
   }
 
+  if (!payload.isPrivacyAccepted) {
+    setContactSubmitState({
+      type: 'error',
+      message: 'Подтвердите согласие на обработку персональных данных.',
+    })
+    return
+  }
+
   setIsContactSubmitting(true)
+  setContactSubmitState({
+    type: 'idle',
+    message: '',
+  })
 
   try {
-    console.log('Contact form payload', payload)
+    const response = await fetch('/api/applications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      let errorMessage = 'Не удалось отправить заявку. Попробуйте еще раз.'
+
+      try {
+        const errorData = await response.json()
+        if (typeof errorData?.message === 'string' && errorData.message.trim()) {
+          errorMessage = errorData.message
+        }
+      } catch {
+        // ignore invalid error body
+      }
+
+      throw new Error(errorMessage)
+    }
+
+    setContactForm({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      message: '',
+      isPrivacyAccepted: false,
+      company: '',
+    })
+
+    setContactSubmitState({
+      type: 'success',
+      message: 'Заявка успешно отправлена. Мы скоро с вами свяжемся.',
+    })
+  } catch (error) {
+    setContactSubmitState({
+      type: 'error',
+      message:
+        error instanceof Error && error.message.trim()
+          ? error.message
+          : 'Не удалось отправить заявку. Попробуйте еще раз.',
+    })
   } finally {
     setIsContactSubmitting(false)
   }
@@ -841,40 +1332,108 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               </a>
             ))}
           </nav>
+
+          <button
+            type="button"
+            className={`mobile-menu-toggle ${isMobileMenuOpen ? 'mobile-menu-toggle--open' : ''}`}
+            aria-label={isMobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu-panel"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
         </div>
       </header>
+      <div
+  className={`mobile-menu-overlay ${isMobileMenuOpen ? 'mobile-menu-overlay--visible' : ''}`}
+  onClick={closeMobileMenu}
+  aria-hidden={isMobileMenuOpen ? 'false' : 'true'}
+/>
 
+<aside
+  id="mobile-menu-panel"
+  className={`mobile-menu ${isMobileMenuOpen ? 'mobile-menu--open' : ''}`}
+  aria-hidden={isMobileMenuOpen ? 'false' : 'true'}
+>
+  <div className="mobile-menu__header">
+    <button type="button" className="mobile-menu__back" onClick={closeMobileMenu}>
+      <span className="mobile-menu__back-arrow" aria-hidden="true" />
+      <span>Назад</span>
+    </button>
+  </div>
+
+  <nav className="mobile-menu__nav" aria-label="Мобильное меню">
+    {mobileMenuItems.map((item) => (
+      <a
+        key={item.href}
+        href={item.href}
+        className="mobile-menu__section-link"
+        onClick={closeMobileMenu}
+      >
+        <span className={item.iconClass} aria-hidden="true" />
+        <span>{item.label}</span>
+      </a>
+    ))}
+  </nav>
+
+  <a href="#contact-form" className="mobile-menu__contact-button" onClick={closeMobileMenu}>
+    Связаться с нами
+  </a>
+</aside>
+
+      {resolvedHeroInfo.isVisible ? (
       <section id="hero" className="hero-section">
         <div className="container hero-section__grid">
-          <div className="hero-content">
-            <h1 className="hero-title">
-              <span className="hero-title__muted">ВАШ</span>{' '}
-              <span className="hero-title__blue">ПУТЕВОДИТЕЛЬ В МИР</span>{' '}
-              <span className="hero-title__muted">КАРЬЕРНЫХ</span>{' '}
-              <span className="hero-title__blue">РЕШЕНИЙ</span>
-            </h1>
+          {isLandingDataLoading ? (
+            <>
+              <div className="hero-content hero-content--skeleton" aria-hidden="true">
+                <div className="hero-title-skeleton">
+                  <span className="hero-title-skeleton__line hero-title-skeleton__line--lg" />
+                  <span className="hero-title-skeleton__line hero-title-skeleton__line--md" />
+                  <span className="hero-title-skeleton__line hero-title-skeleton__line--sm" />
+                </div>
 
-            <p className="hero-text">
-              Пространство для подростков, родителей, молодёжи и начинающих
-              предпринимателей.
-            </p>
+                <div className="hero-text-skeleton">
+                  <span className="hero-text-skeleton__line" />
+                  <span className="hero-text-skeleton__line hero-text-skeleton__line--short" />
+                </div>
 
-            <div className="hero-actions">
-              <a href="#contact-form" className="button button--hero">
-                Связаться с нами
-              </a>
-            </div>
-          </div>
+                <div className="hero-button-skeleton" />
+              </div>
 
-          <div className="hero-visual" aria-hidden="true">
-            <img
-              src="/images/image_1.png"
-              alt=""
-              className="hero-visual__image"
-            />
-          </div>
+              <div className="hero-visual hero-visual--skeleton" aria-hidden="true">
+                <div className="hero-visual__image hero-visual__image--skeleton" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="hero-content">
+                <h1 className="hero-title">{renderHeroTitle(resolvedHeroInfo.title)}</h1>
+
+                <p className="hero-text">{resolvedHeroInfo.subtitle}</p>
+
+                <div className="hero-actions">
+                  <a href={resolvedHeroInfo.buttonLink} className="button button--hero">
+                    {resolvedHeroInfo.buttonText}
+                  </a>
+                </div>
+              </div>
+
+              <div className="hero-visual" aria-hidden="true">
+                <img
+                  src={resolvedHeroInfo.image}
+                  alt=""
+                  className="hero-visual__image"
+                />
+              </div>
+            </>
+          )}
         </div>
       </section>
+      ) : null}
 
 
       <section className="features-section">
@@ -894,129 +1453,183 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       </section>
 
       <section className="banner-section">
-        <div className="container">
-          <div className="banner-slider">
-            <div
-              className="banner-slider__track"
-              style={{ transform: `translateX(-${activeBanner * 33.3333}%)` }}
-            >
-              {bannerSlides.map((slide, index) => {
-                const slideContent = (
-                  <img src={slide.image} alt={`Баннер ${index + 1}`} />
-                )
-
-                return slide.href ? (
-                  <a
-                    key={slide.image}
-                    href={slide.href}
-                    className="banner-slider__slide banner-slider__slide--link"
-                  >
-                    {slideContent}
-                  </a>
-                ) : (
-                  <div key={slide.image} className="banner-slider__slide">
-                    {slideContent}
-                  </div>
-                )
-              })}
-            </div>
-
-            <div className="banner-slider__dots">
-              {bannerSlides.map((slide, index) => (
-                <button
-                  key={slide.image}
-                  type="button"
-                  className={`banner-slider__dot ${
-                    activeBanner === index ? 'banner-slider__dot--active' : ''
-                  }`}
-                  aria-label={`Показать баннер ${index + 1}`}
-                  aria-pressed={activeBanner === index}
-                  onClick={() => {
-                    setActiveBanner(index)
-
-                    if (autoSlideRef.current !== null) {
-                      window.clearInterval(autoSlideRef.current)
-                    }
-
-                    autoSlideRef.current = window.setInterval(() => {
-                      setActiveBanner((prev) => (prev + 1) % bannerSlides.length)
-                    }, 4500)
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+  <div className="container">
+    <div className="banner-slider">
+      {isLandingDataLoading ? (
+        <div className="banner-slider__skeleton" aria-hidden="true">
+          <div className="banner-slider__skeleton-slide" />
         </div>
-      </section>
+      ) : (
+        <>
+          <div
+            className="banner-slider__track"
+            style={{
+              width: `${bannerSlideCount * 100}%`,
+              transform: `translateX(-${activeBanner * (100 / bannerSlideCount)}%)`,
+            }}
+          >
+            {resolvedBannerSlides.map((slide, index) => {
+              const slideContent = (
+                <img src={slide.image} alt={`Баннер ${index + 1}`} />
+              )
 
-      <section id="about" className="about-section">
-        <div className="section-side-decor section-side-decor--about-left" aria-hidden="true" />
-        <div className="container">
-          <div className="about-block">
-            <div className="about-block__media" aria-hidden="true">
-              <div className="about-block__image-wrap">
-                <img
-                  src="/images/image_2.jpg"
-                  alt=""
-                  className="about-block__image"
-                />
-              </div>
-            </div>
-
-            <div className="about-block__content">
-              <div className="about-block__heading">
-                <h2 className="about-block__title">О нас</h2>
-              </div>
-
-              <div className="about-block__text">
-                <p>
-                  Сегодня в быстро меняющемся мире важно не просто выбрать
-                  профессию, а понять себя, свои сильные стороны, интересы и то,
-                  как превратить их в осознанный путь развития.
-                </p>
-                <p>
-                  Карьерный путь больше не выглядит как прямая линия: подросткам,
-                  родителям, студентам и взрослым всё чаще нужна поддержка,
-                  навигация и понятная структура принятия решений.
-                </p>
-                <p>
-                  Центр «ПрофСтарт» помогает увидеть реальные возможности,
-                  определить вектор движения и выстроить следующий шаг — в учёбе,
-                  профессии или собственном деле.
-                </p>
-              </div>
-            </div>
+              return slide.href ? (
+                <a
+                  key={`${slide.image}-${index}`}
+                  href={slide.href}
+                  className="banner-slider__slide banner-slider__slide--link"
+                  style={{ flex: `0 0 ${100 / bannerSlideCount}%`, width: `${100 / bannerSlideCount}%` }}
+                >
+                  {slideContent}
+                </a>
+              ) : (
+                <div
+                  key={`${slide.image}-${index}`}
+                  className="banner-slider__slide"
+                  style={{ flex: `0 0 ${100 / bannerSlideCount}%`, width: `${100 / bannerSlideCount}%` }}
+                >
+                  {slideContent}
+                </div>
+              )
+            })}
           </div>
-        </div>
-      </section>
 
-      <section className="audience-section">
-        <div className="container">
-          <h2 className="audience-section__title">Для кого работает центр ПрофСтарт?</h2>
+          <div className="banner-slider__dots">
+            {resolvedBannerSlides.map((slide, index) => (
+              <button
+                key={`${slide.image}-${index}`}
+                type="button"
+                className={`banner-slider__dot ${
+                  activeBanner === index ? 'banner-slider__dot--active' : ''
+                }`}
+                aria-label={`Показать баннер ${index + 1}`}
+                aria-pressed={activeBanner === index}
+                onClick={() => {
+                  setActiveBanner(index)
 
-          <div className="audience-grid">
-            {audienceCards.map((card) => (
-              <article key={card.title} className="audience-card">
-                <div className="audience-card__head">
-                  <h3 className="audience-card__head-title">{card.title}</h3>
-                </div>
+                  if (autoSlideRef.current !== null) {
+                    window.clearInterval(autoSlideRef.current)
+                  }
 
-                <div className="audience-card__body">
-                  <ul className="audience-card__list">
-                    {card.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-
-                  <a href="#contact-form" className="button button--audience">
-                    Оставить заявку
-                  </a>
-                </div>
-              </article>
+                  autoSlideRef.current = window.setInterval(() => {
+                    setActiveBanner((prev) => (prev + 1) % bannerSlideCount)
+                  }, 4500)
+                }}
+              />
             ))}
           </div>
+        </>
+      )}
+    </div>
+  </div>
+</section>
+
+{resolvedAboutInfo.isVisible ? (
+  <section id="about" className="about-section">
+    <div className="container about-block">
+      {isLandingDataLoading ? (
+        <>
+          <div className="about-block__media about-block__media--skeleton" aria-hidden="true">
+            <div className="about-block__image-wrap about-block__image-wrap--skeleton" />
+          </div>
+
+          <div className="about-block__content about-block__content--skeleton" aria-hidden="true">
+            <div className="about-block__heading">
+              <div className="about-block__title-skeleton" />
+            </div>
+
+            <div className="about-block__text-skeleton">
+              <span />
+              <span />
+              <span className="about-block__text-skeleton-short" />
+              <span />
+              <span />
+              <span className="about-block__text-skeleton-short" />
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="about-block__media" aria-hidden="true">
+            <div className="about-block__image-wrap">
+              <img
+                src={resolvedAboutInfo.image}
+                alt={resolvedAboutInfo.title}
+                className="about-block__image"
+              />
+            </div>
+          </div>
+
+          <div className="about-block__content">
+            <div className="about-block__heading">
+              <h2 className="about-block__title">{resolvedAboutInfo.title}</h2>
+            </div>
+
+            <div className="about-block__text">
+              {resolvedAboutInfo.text
+                .split('\n')
+                .map((paragraph) => paragraph.trim())
+                .filter(Boolean)
+                .map((paragraph, index) => (
+                  <p key={`${resolvedAboutInfo.title}-${index}`}>{paragraph}</p>
+                ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  </section>
+) : null}
+
+      {resolvedAudienceInfo.isVisible ? (
+      <section className="audience-section">
+        <div className="container">
+          <h2 className="audience-section__title">{resolvedAudienceInfo.title}</h2>
+
+          <div className="audience-grid">
+            {isLandingDataLoading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <article key={`audience-skeleton-${index}`} className="audience-card audience-card--skeleton" aria-hidden="true">
+                    <div className="audience-card__head">
+                      <div className="audience-card__head-title-skeleton" />
+                    </div>
+
+                    <div className="audience-card__body">
+                      <div className="audience-card__list-skeleton">
+                        <span />
+                        <span />
+                        <span />
+                        <span />
+                        <span className="audience-card__list-skeleton-short" />
+                      </div>
+
+                      <div className="audience-card__button-skeleton" />
+                    </div>
+                  </article>
+                ))
+              : resolvedAudienceInfo.items.map((card) => (
+                  <article key={card.title} className="audience-card">
+                    <div className="audience-card__head">
+                      <h3 className="audience-card__head-title">{card.title}</h3>
+                    </div>
+
+                    <div className="audience-card__body">
+                      <ul className="audience-card__list">
+                        {card.items.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+
+                      <a href={card.buttonLink} className="button button--audience">
+                        {card.buttonText}
+                      </a>
+                    </div>
+                  </article>
+                ))}
+          </div>
         </div>
       </section>
+      ) : null}
 
       <section id="consultations" className="consultations-section">
         <div className="section-side-decor section-side-decor--consultations-right" aria-hidden="true" />
@@ -1065,73 +1678,95 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
         </div>
       </section>
-
-      <section id="guidance" className="guidance-section">
+      {resolvedCareerGuidanceInfo.isVisible ? (
+        <section id="guidance" className="guidance-section">
         <div className="container">
-          <h2 className="guidance-section__title">Профориентация</h2>
+          <h2 className="guidance-section__title">{resolvedCareerGuidanceInfo.title}</h2>
 
           <div className={`guidance-slider ${isGuidanceSliding ? 'guidance-slider--sliding' : ''}`}>
-            <div className="guidance-slider__viewport">
-              <div
-                className={`guidance-slider__track ${
+          <div className="guidance-slider__viewport">
+            <div
+              className={`guidance-slider__track ${
                 !isGuidanceTransitionEnabled ? 'guidance-slider__track--no-transition' : ''
-                }`}
-                style={{
-                  transform: `translateX(calc(-${guidanceIndex} * var(--guidance-step)))`,
-                }}
-                onTransitionEnd={handleGuidanceTransitionEnd}
-              >
-              {guidanceLoopCards.map((card, index) => (
-              <article
-                key={`${card.title}-${index}`}
-                className={`guidance-card ${
-                  index === (isGuidanceMobile ? guidanceIndex : guidanceIndex + 1)
-                    ? 'guidance-card--featured'
-                    : ''
-                } ${
-                  !isGuidanceCardVisible(index) ? 'guidance-card--hidden' : ''
-                }`}
-              >
-              <div className="guidance-card__head">
-                <h3 className="guidance-card__title">{card.title}</h3>
-              </div>
+              }`}
+              style={{
+                transform: `translateX(calc(-${guidanceIndex} * var(--guidance-step)))`,
+              }}
+              onTransitionEnd={handleGuidanceTransitionEnd}
+            >
+              {resolvedGuidanceLoopCards.map((card, index) => (
+                <article
+                  key={`${card.title}-${index}`}
+                  className={`guidance-card ${
+                    index === (isGuidanceMobile ? guidanceIndex : guidanceIndex + 1)
+                      ? 'guidance-card--featured'
+                      : ''
+                  } ${
+                    !isGuidanceCardVisible(index) ? 'guidance-card--hidden' : ''
+                  } ${isLandingDataLoading ? 'guidance-card--skeleton' : ''}`}
+                >
+                <div className="guidance-card__head">
+                  {isLandingDataLoading ? (
+                    <div className="guidance-card__title-skeleton" aria-hidden="true" />
+                  ) : (
+                    <h3 className="guidance-card__title">{card.title}</h3>
+                  )}
+                </div>
 
-              <div className="guidance-card__body">
-                <p className="guidance-card__price">{card.price}</p>
+                <div className="guidance-card__body">
+                  {isLandingDataLoading ? (
+                    <>
+                      <div className="guidance-card__price-skeleton" aria-hidden="true" />
 
-                <ul className="guidance-card__list">
-                  {card.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+                      <div className="guidance-card__list-skeleton" aria-hidden="true">
+                        <span />
+                        <span />
+                        <span />
+                        <span className="guidance-card__list-skeleton-short" />
+                      </div>
 
-              <a href="#contact-form" className="button button--guidance">
-               Купить
-              </a>
-            </div>
-          </article>
-      ))}
-    </div>
-  </div>
+                      <div className="guidance-card__button-skeleton" aria-hidden="true" />
+                    </>
+                  ) : (
+                    <>
+                      <p className="guidance-card__price">{card.price}</p>
 
-  <div className="guidance-slider__controls">
-    <button
-      type="button"
-      className="guidance-slider__control guidance-slider__control--prev"
-      aria-label="Предыдущие карточки"
-      onClick={goGuidancePrev}
-    />
-    <button
-      type="button"
-      className="guidance-slider__control guidance-slider__control--next"
-      aria-label="Следующие карточки"
-      onClick={goGuidanceNext}
-    />
-  </div>
-</div>
+                      <ul className="guidance-card__list">
+                        {card.items.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+
+                      <a href={card.buttonLink} className="button button--guidance">
+                        {card.buttonText}
+                      </a>
+                    </>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-      </section>
 
+        <div className="guidance-slider__controls">
+          <button
+            type="button"
+            className="guidance-slider__control guidance-slider__control--prev"
+            aria-label="Предыдущие карточки"
+            onClick={goGuidancePrev}
+          />
+          <button
+            type="button"
+            className="guidance-slider__control guidance-slider__control--next"
+            aria-label="Следующие карточки"
+            onClick={goGuidanceNext}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+) : null}
+      {resolvedCtaInfo.isVisible ? (
       <section className="question-cta-section">
         <div className="container">
           <div className="question-cta">
@@ -1143,94 +1778,125 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               />
             </div>
 
-            <div className="question-cta__content">
-              <h2 className="question-cta__title">
-                Есть вопросы или сложности с выбором?
-              </h2>
+            {isLandingDataLoading ? (
+              <>
+                <div className="question-cta__content question-cta__content--skeleton" aria-hidden="true">
+                  <div className="question-cta__title-skeleton" />
+                  <div className="question-cta__text-skeleton">
+                    <span />
+                    <span className="question-cta__text-skeleton-short" />
+                  </div>
+                </div>
 
-              <p className="question-cta__text">
-                Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим
-                на все интересующие вас вопросы
-              </p>
-            </div>
+                <div className="question-cta__actions question-cta__actions--skeleton" aria-hidden="true">
+                  <div className="question-cta__button-skeleton" />
 
-            <div className="question-cta__actions">
-              <a href="#contact-form" className="question-cta__button">
-                Отправить заявку
-              </a>
+                  <div className="question-cta__manager-skeleton">
+                    <div className="question-cta__manager-label-skeleton" />
+                    <div className="question-cta__manager-icon-skeleton" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="question-cta__content">
+                  <h2 className="question-cta__title">{resolvedCtaInfo.title}</h2>
 
-              <div className="question-cta__manager">
-                <span className="question-cta__manager-label">или написать:</span>
-                <a href="#contact-form" className="question-cta__manager-link" aria-label="Написать менеджеру">
-                  <img
-                    src="/images/logo_max.png"
-                    alt="MAX"
-                    className="question-cta__manager-logo"
-                  />
-                </a>
-              </div>
-            </div>
+                  <p className="question-cta__text">{resolvedCtaInfo.text}</p>
+                </div>
+
+                <div className="question-cta__actions">
+                  <a href={resolvedCtaInfo.buttonLink} className="question-cta__button">
+                    {resolvedCtaInfo.buttonText}
+                  </a>
+
+                  <div className="question-cta__manager">
+                    <span className="question-cta__manager-label">{resolvedCtaInfo.managerText}</span>
+                    <a
+                      href={resolvedCtaInfo.managerLink}
+                      className="question-cta__manager-link"
+                      aria-label="Написать менеджеру"
+                      target={resolvedCtaInfo.managerLink.startsWith('http') ? '_blank' : undefined}
+                      rel={resolvedCtaInfo.managerLink.startsWith('http') ? 'noreferrer noopener' : undefined}
+                    >
+                      <img
+                        src={resolvedCtaInfo.managerIcon}
+                        alt="Менеджер"
+                        className="question-cta__manager-logo"
+                      />
+                    </a>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
+      ) : null}
 
-      <section id="entrepreneurship" className="entrepreneurship-section">
-        <div
-          className="section-side-decor section-side-decor--entrepreneurship-left"
-          aria-hidden="true"
-        />
+      {resolvedEntrepreneurshipInfo.isVisible ? (
+  <section id="entrepreneurship" className="entrepreneurship-section">
+    <div
+      className="section-side-decor section-side-decor--entrepreneurship-left"
+      aria-hidden="true"
+    />
 
-        <div className="container">
-          <h2 className="entrepreneurship-section__title">Предпринимательство</h2>
+    <div className="container">
+      <h2 className="entrepreneurship-section__title">{resolvedEntrepreneurshipInfo.title}</h2>
 
-          <div className="entrepreneurship-grid">
-            <article className="entrepreneurship-card">
-              <div className="entrepreneurship-card__head">
-                <h3 className="entrepreneurship-card__title">
-                  Подготовка и запуск бизнеса
-                </h3>
-              </div>
+      <div className="entrepreneurship-grid">
+        {entrepreneurshipRenderCards.map((card, index) => (
+          <article
+            key={isLandingDataLoading ? `entrepreneurship-skeleton-${index}` : `${card.title}-${index}`}
+            className={`entrepreneurship-card ${
+              !isLandingDataLoading && index === 1 ? 'entrepreneurship-card--featured' : ''
+            } ${isLandingDataLoading ? 'entrepreneurship-card--skeleton' : ''}`}
+            aria-hidden={isLandingDataLoading ? 'true' : undefined}
+          >
+            <div className="entrepreneurship-card__head">
+              {isLandingDataLoading ? (
+                <div className="entrepreneurship-card__title-skeleton" />
+              ) : (
+                <h3 className="entrepreneurship-card__title">{card.title}</h3>
+              )}
+            </div>
 
-              <div className="entrepreneurship-card__body">
-                <p className="entrepreneurship-card__price">25 000 ₽</p>
+            <div className="entrepreneurship-card__body">
+              {isLandingDataLoading ? (
+                <>
+                  <div className="entrepreneurship-card__price-skeleton" />
 
-                <ul className="entrepreneurship-card__list">
-                  <li>Анализируем и оцениваем бизнес-идею</li>
-                  <li>Изучаем рынок и целевую аудиторию</li>
-                  <li>Рассчитываем стартовые вложения и финансовую модель</li>
-                  <li>Формируем или корректируем бизнес-план</li>
-                  <li>Помогаем определить первые шаги запуска</li>
-                </ul>
+                  <div className="entrepreneurship-card__list-skeleton">
+                    <span />
+                    <span />
+                    <span />
+                    <span className="entrepreneurship-card__list-skeleton-short" />
+                  </div>
 
-                <a href="#contact-form" className="button button--entrepreneurship">
-                  Купить
-                </a>
-              </div>
-            </article>
+                  <div className="entrepreneurship-card__button-skeleton" />
+                </>
+              ) : (
+                <>
+                  <p className="entrepreneurship-card__price">{card.price}</p>
 
-            <article className="entrepreneurship-card entrepreneurship-card--featured">
-              <div className="entrepreneurship-card__head">
-                <h3 className="entrepreneurship-card__title">Бизнес-консультации</h3>
-              </div>
+                  <ul className="entrepreneurship-card__list">
+                    {card.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
 
-              <div className="entrepreneurship-card__body">
-                <p className="entrepreneurship-card__price">5 000 ₽</p>
-
-                <ul className="entrepreneurship-card__list">
-                  <li>Тем, кто хочет открыть своё дело, но не знает, с чего начать</li>
-                  <li>Тем, кто планирует получить государственную поддержку</li>
-                  <li>Тем, кто уже работает, но чувствует хаос в финансах или стратегии</li>
-                  <li>Помогаем структурировать действия и первые приоритеты</li>
-                </ul>
-
-                <a href="#contact-form" className="button button--entrepreneurship">
-                  Купить
-                </a>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
+                  <a href={card.buttonLink} className="button button--entrepreneurship">
+                    {card.buttonText}
+                  </a>
+                </>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+) : null}
 
       <section id="reviews" className="reviews-section">
         <div className="container">
@@ -1249,38 +1915,65 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                     willChange: 'transform',
                   }}
                 >
-                  {visibleReviewsCards.map((review) => (
-                    <article
-                      key={`${review.name}-${review.date}`}
-                      className="review-card"
-                      style={{
-                        flex: isReviewsMobile ? '0 0 100%' : '0 0 calc((100% - 18px) / 2)',
-                      }}
-                    >
-                      <div className="review-card__head">
-                        <div className="review-card__avatar-wrap" aria-hidden="true">
-                          <img
-                            src={review.avatar}
-                            alt=""
-                            className="review-card__avatar"
-                          />
-                        </div>
+                  {isLandingDataLoading
+  ? Array.from({ length: isReviewsMobile ? 1 : 2 }).map((_, index) => (
+      <article
+        key={`review-skeleton-${index}`}
+        className="review-card review-card--skeleton"
+        style={{
+          flex: isReviewsMobile ? '0 0 100%' : '0 0 calc((100% - 18px) / 2)',
+        }}
+        aria-hidden="true"
+      >
+        <div className="review-card__head">
+          <div className="review-card__avatar-wrap review-card__avatar-wrap--skeleton" />
+          <div className="review-card__name-skeleton" />
+        </div>
 
-                        <h3 className="review-card__name">{review.name}</h3>
-                      </div>
+        <div className="review-card__text-skeleton">
+          <span />
+          <span />
+          <span className="review-card__text-skeleton-short" />
+        </div>
 
-                      <p className="review-card__text">{review.text}</p>
+        <div className="review-card__footer review-card__footer--skeleton">
+          <span className="review-card__source-skeleton" />
+          <span className="review-card__date-skeleton" />
+        </div>
+      </article>
+    ))
+  : visibleReviewsCards.map((review) => (
+      <article
+        key={`${review.name}-${review.date}`}
+        className="review-card"
+        style={{
+          flex: isReviewsMobile ? '0 0 100%' : '0 0 calc((100% - 18px) / 2)',
+        }}
+      >
+        <div className="review-card__head">
+          <div className="review-card__avatar-wrap" aria-hidden="true">
+            <img
+              src={review.avatar}
+              alt=""
+              className="review-card__avatar"
+            />
+          </div>
 
-                      <div className="review-card__footer">
-                        {review.source ? (
-                          <span className="review-card__source">{review.source}</span>
-                        ) : (
-                          <span />
-                        )}
-                        <span className="review-card__date">{review.date}</span>
-                      </div>
-                    </article>
-                  ))}
+          <h3 className="review-card__name">{review.name}</h3>
+        </div>
+
+        <p className="review-card__text">{review.text}</p>
+
+        <div className="review-card__footer">
+          {review.source ? (
+            <span className="review-card__source">{review.source}</span>
+          ) : (
+            <span />
+          )}
+          <span className="review-card__date">{review.date}</span>
+        </div>
+      </article>
+    ))}
                 </div>
               </div>
 
@@ -1320,32 +2013,55 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                     willChange: 'transform',
                   }}
                 >
-                  {visibleNewsCards.map((news) => (
-                    <article
-                      key={news.id}
-                      className="news-card"
-                      style={{
-                        flex: isNewsMobile
-                          ? '0 0 100%'
-                          : '0 0 calc((100% - 36px) / 3)',
-                      }}
-                    >
-                      <button
-                        type="button"
-                        className="news-card__inner"
-                        onClick={() => setSelectedNews(news)}
-                        aria-label={`Открыть новость: ${news.title}`}
-                      >
-                        <div className="news-card__image-wrap" aria-hidden="true">
-                          <img src={news.image} alt="" className="news-card__image" />
-                        </div>
+                  {isLandingDataLoading
+  ? Array.from({ length: isNewsMobile ? 1 : 3 }).map((_, index) => (
+      <article
+        key={`news-skeleton-${index}`}
+        className="news-card news-card--skeleton"
+        style={{
+          flex: isNewsMobile
+            ? '0 0 100%'
+            : '0 0 calc((100% - 36px) / 3)',
+        }}
+        aria-hidden="true"
+      >
+        <div className="news-card__inner">
+          <div className="news-card__image-wrap news-card__image-wrap--skeleton" />
 
-                        <div className="news-card__body">
-                          <p className="news-card__excerpt">{news.excerpt}</p>
-                        </div>
-                      </button>
-                    </article>
-                  ))}
+          <div className="news-card__body news-card__body--skeleton">
+            <span />
+            <span />
+            <span className="news-card__body-skeleton-short" />
+          </div>
+        </div>
+      </article>
+    ))
+  : visibleNewsCards.map((news) => (
+      <article
+        key={news.id}
+        className="news-card"
+        style={{
+          flex: isNewsMobile
+            ? '0 0 100%'
+            : '0 0 calc((100% - 36px) / 3)',
+        }}
+      >
+        <button
+          type="button"
+          className="news-card__inner"
+          onClick={() => setSelectedNews(news)}
+          aria-label={`Открыть новость: ${news.title}`}
+        >
+          <div className="news-card__image-wrap" aria-hidden="true">
+            <img src={news.image} alt="" className="news-card__image" />
+          </div>
+
+          <div className="news-card__body">
+            <p className="news-card__excerpt">{news.excerpt}</p>
+          </div>
+        </button>
+      </article>
+    ))}
                 </div>
               </div>
 
@@ -1417,7 +2133,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       <div className="contact-section__content">
         <p className="contact-section__lead">{resolvedContactSection.description}</p>
 
-        <form className="contact-form" onSubmit={handleContactSubmit}>
+        <form className="contact-form" onSubmit={handleContactSubmit} noValidate>
           <input type="hidden" name="sourceBlock" value="contact-form" />
           <input
             type="text"
@@ -1503,6 +2219,15 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           >
             {isContactSubmitting ? 'Отправка...' : 'Отправить'}
           </button>
+
+          {contactSubmitState.type !== 'idle' ? (
+            <p
+              className={`contact-form__status contact-form__status--${contactSubmitState.type}`}
+              role={contactSubmitState.type === 'error' ? 'alert' : 'status'}
+            >
+              {contactSubmitState.message}
+            </p>
+          ) : null}
         </form>
       </div>
     </div>

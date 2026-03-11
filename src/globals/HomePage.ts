@@ -14,29 +14,12 @@ export const HomePage: GlobalConfig = {
         { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Оставить заявку' },
         { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
         { name: 'image', label: 'Изображение', type: 'relationship', relationTo: 'media' },
-      ],
-    },
-    {
-      name: 'tilesSection',
-      label: 'Плитки',
-      type: 'group',
-      fields: [
-        {
-          name: 'items',
-          label: 'Элементы',
-          type: 'array',
-          maxRows: 12,
-          fields: [
-            { name: 'title', label: 'Заголовок', type: 'text', required: true },
-            { name: 'text', label: 'Текст', type: 'textarea' },
-            { name: 'icon', label: 'Иконка', type: 'relationship', relationTo: 'media' },
-          ],
-        },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
       ],
     },
     {
       name: 'introSlider',
-      label: 'Слайдер',
+      label: 'Банеры',
       type: 'group',
       fields: [
         { name: 'title', label: 'Заголовок секции', type: 'text' },
@@ -44,7 +27,7 @@ export const HomePage: GlobalConfig = {
           name: 'slides',
           label: 'Слайды',
           type: 'array',
-          maxRows: 20,
+          maxRows: 50,
           fields: [
             { name: 'title', label: 'Заголовок', type: 'text', required: true },
             { name: 'text', label: 'Текст', type: 'textarea' },
@@ -61,6 +44,7 @@ export const HomePage: GlobalConfig = {
         { name: 'title', label: 'Заголовок', type: 'text', required: true },
         { name: 'text', label: 'Текст', type: 'textarea', required: true },
         { name: 'image', label: 'Изображение', type: 'relationship', relationTo: 'media' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
       ],
     },
     {
@@ -69,16 +53,36 @@ export const HomePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', required: true },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
         {
           name: 'items',
           label: 'Карточки',
           type: 'array',
-          maxRows: 12,
+          minRows: 3,
+          maxRows: 3,
           fields: [
-            { name: 'title', label: 'Заголовок', type: 'text', required: true },
-            { name: 'text', label: 'Текст', type: 'textarea' },
-            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Оставить заявку' },
-            { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
+            { name: 'title', label: 'Заголовок карточки', type: 'text', required: true },
+            {
+              name: 'points',
+              label: 'Пункты',
+              type: 'array',
+              maxRows: 5,
+              fields: [
+                { name: 'text', label: 'Текст пункта', type: 'text', required: true },
+              ],
+            },
+            {
+              name: 'buttonText',
+              label: 'Текст кнопки',
+              type: 'text',
+              defaultValue: 'Оставить заявку',
+            },
+            {
+              name: 'buttonLink',
+              label: 'Ссылка кнопки',
+              type: 'text',
+              defaultValue: '#contact-form',
+            },
           ],
         },
       ],
@@ -87,9 +91,14 @@ export const HomePage: GlobalConfig = {
       name: 'consultations',
       label: 'Консультации',
       type: 'group',
+      admin: {
+        disabled: true,
+        condition: () => false,
+      },
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', required: true },
         { name: 'subtitle', label: 'Подзаголовок', type: 'textarea' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
         {
           name: 'items',
           label: 'Элементы',
@@ -111,16 +120,27 @@ export const HomePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', required: true },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
         {
           name: 'items',
           label: 'Карточки',
           type: 'array',
+          minRows: 4,
           maxRows: 20,
           fields: [
-            { name: 'title', label: 'Заголовок', type: 'text', required: true },
-            { name: 'price', label: 'Цена', type: 'text' },
-            { name: 'packageIncludes', label: 'Что входит в пакет', type: 'textarea' },
-            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Купить' },
+            { name: 'title', label: 'Название услуги', type: 'text', required: true },
+            { name: 'price', label: 'Стоимость', type: 'text', required: true },
+            {
+              name: 'points',
+              label: 'Пункты',
+              type: 'array',
+              minRows: 1,
+              maxRows: 6,
+              fields: [
+                { name: 'text', label: 'Текст пункта', type: 'text', required: true },
+              ],
+            },
+            { name: 'buttonText', label: 'Название кнопки', type: 'text', defaultValue: 'Купить' },
             { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
           ],
         },
@@ -132,11 +152,18 @@ export const HomePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', required: true },
-        { name: 'text', label: 'Текст', type: 'textarea' },
+        { name: 'text', label: 'Описание', type: 'textarea' },
         { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Оставить заявку' },
         { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
-        { name: 'maxButtonText', label: 'Текст кнопки MAX', type: 'text', defaultValue: 'Написать в MAX' },
-        { name: 'maxLink', label: 'Ссылка на MAX', type: 'text' },
+        { name: 'managerText', label: 'Текст нижней подписи', type: 'text', defaultValue: 'или написать:' },
+        { name: 'managerLink', label: 'Ссылка нижней иконки', type: 'text', defaultValue: '#contact-form' },
+        {
+          name: 'managerIcon',
+          label: 'Иконка нижней ссылки',
+          type: 'relationship',
+          relationTo: 'media',
+        },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
       ],
     },
     {
@@ -145,17 +172,26 @@ export const HomePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', required: true },
-        { name: 'subtitle', label: 'Подзаголовок', type: 'textarea' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
         {
           name: 'items',
           label: 'Карточки',
           type: 'array',
-          maxRows: 20,
+          minRows: 1,
+          maxRows: 3,
           fields: [
             { name: 'title', label: 'Заголовок', type: 'text', required: true },
-            { name: 'description', label: 'Описание', type: 'textarea' },
-            { name: 'image', label: 'Изображение', type: 'relationship', relationTo: 'media' },
-            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Оставить заявку' },
+            { name: 'price', label: 'Сумма', type: 'text', required: true },
+            {
+              name: 'points',
+              label: 'Пункты',
+              type: 'array',
+              maxRows: 5,
+              fields: [
+                { name: 'text', label: 'Текст пункта', type: 'text', required: true },
+              ],
+            },
+            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Купить' },
             { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
           ],
         },
@@ -168,6 +204,7 @@ export const HomePage: GlobalConfig = {
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', defaultValue: 'Отзывы' },
         { name: 'subtitle', label: 'Подзаголовок', type: 'textarea' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
       ],
     },
     {
@@ -177,6 +214,7 @@ export const HomePage: GlobalConfig = {
       fields: [
         { name: 'title', label: 'Заголовок', type: 'text', defaultValue: 'Новости' },
         { name: 'subtitle', label: 'Подзаголовок', type: 'textarea' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
       ],
     },
     {
@@ -188,6 +226,7 @@ export const HomePage: GlobalConfig = {
         { name: 'subtitle', label: 'Подзаголовок', type: 'textarea' },
         { name: 'formTitle', label: 'Заголовок формы', type: 'text', defaultValue: 'Оставить заявку' },
         { name: 'submitButtonText', label: 'Текст кнопки отправки', type: 'text', defaultValue: 'Отправить' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
       ],
     },
   ],
