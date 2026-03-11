@@ -2997,11 +2997,11 @@ textarea {
   .entrepreneurship-section {
     padding: 16px 0 28px;
   }
-
+  .hero-text{margin: 9px 0 22px;}
   .entrepreneurship-section__title {
     margin-bottom: 20px;
-    font-size: 48px;
-    line-height: 0.96;
+    font-size: 28px;
+    line-height: 0.98;
     overflow-wrap: anywhere;
     word-break: break-word;
   }
@@ -3803,8 +3803,8 @@ textarea {
     width: 45px;
     height: 40px;
     flex-basis: 45px;
-    background-size: 227px 85px;
-    background-position: -174px -46px;
+    background-size: 148px 50px;
+    background-position: -106px -20px;
   }
 
   .mobile-menu__close {
