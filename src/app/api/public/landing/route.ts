@@ -38,6 +38,7 @@ type IntroSlideDoc = {
   title?: string | null
   text?: string | null
   image?: MediaRelation | null
+  link?: string | null
 }
 
 type AudienceItemDoc = {
@@ -154,13 +155,14 @@ export async function GET() {
       introSlider: {
         title: homePageResult?.introSlider?.title ?? null,
         slides: Array.isArray(homePageResult?.introSlider?.slides)
-                ? (homePageResult.introSlider.slides as IntroSlideDoc[]).map((item) => ({
-                    id: item.id,
-                    title: item.title ?? '',
-                    text: item.text ?? '',
-                    image: item.image?.url ?? null,
-        }))
-        : [],
+          ? (homePageResult.introSlider.slides as IntroSlideDoc[]).map((item) => ({
+              id: item.id,
+              title: item.title ?? '',
+              text: item.text ?? '',
+              image: item.image?.url ?? null,
+              link: item.link?.trim() || null,
+            }))
+          : [],
       },
       about: {
         title: homePageResult?.about?.title ?? null,

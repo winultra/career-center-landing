@@ -258,6 +258,7 @@ type LandingIntroSlide = {
   title?: string | null
   text?: string | null
   image?: string | null
+  link?: string | null
 }
 type LandingIntroSlider = {
   title?: string | null
@@ -953,7 +954,7 @@ const isGuidanceCardVisible = (index: number) => {
   landingData.introSlider.slides.length > 0
     ? landingData.introSlider.slides.map((slide) => ({
         image: slide.image ?? '/images/banners/baner1.png',
-        href: '#contact-form',
+        href: slide.link?.trim() || undefined,
       }))
     : bannerSlides
   const bannerSlideCount = resolvedBannerSlides.length

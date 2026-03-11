@@ -32,6 +32,14 @@ export const HomePage: GlobalConfig = {
             { name: 'title', label: 'Заголовок', type: 'text', required: true },
             { name: 'text', label: 'Текст', type: 'textarea' },
             { name: 'image', label: 'Изображение', type: 'relationship', relationTo: 'media' },
+            {
+              name: 'link',
+              label: 'Ссылка баннера',
+              type: 'text',
+              admin: {
+                description: 'Оставьте пустым, если баннер не должен быть кликабельным',
+              },
+            },
           ],
         },
       ],
