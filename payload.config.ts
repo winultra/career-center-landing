@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
+import { ru } from '@payloadcms/translations/languages/ru'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
@@ -36,6 +37,10 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+  },
+  i18n: {
+    supportedLanguages: { ru },
+    fallbackLanguage: 'ru',
   },
   typescript: {
     outputFile: path.resolve(dirname, 'src/payload-types.ts'),
