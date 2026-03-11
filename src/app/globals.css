@@ -3041,16 +3041,14 @@ textarea {
   .entrepreneurship-card__list li {
     padding-left: 26px;
     font-size: 12px;
+    padding-left: 46px;
+    line-height: 1.24;
+    padding-top: 2px;
   }
 
   .entrepreneurship-card__list li::before {
     width: 16px;
     height: 16px;
-  }
-  .entrepreneurship-card__list li {
-    padding-left: 46px;
-    line-height: 1.24;
-    padding-top: 2px;
   }
   
   .button--entrepreneurship {
