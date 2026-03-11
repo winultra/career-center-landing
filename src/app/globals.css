@@ -661,6 +661,7 @@ textarea {
 
 .hero-actions {
   margin-top: 22px;
+  margin-bottom: 12px;
 }
 
 .button {
@@ -2786,6 +2787,7 @@ textarea {
   .consultations-layout{
     left:0;
   }
+  .features-section{padding: 0px 0 18px;}
 }
 
 @media (max-width: 720px) {
@@ -3279,7 +3281,7 @@ textarea {
 .site-footer__logo-image {
   width: 168px;
 }
-
+.features-section{padding: 0px 0 18px;}
 .site-footer__info {
   grid-template-columns: 1fr;
   gap: 14px;
