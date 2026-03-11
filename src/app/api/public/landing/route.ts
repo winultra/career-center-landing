@@ -1,6 +1,70 @@
 import { NextResponse } from 'next/server'
 
+
 import { getPayloadClient } from '@/lib/payload'
+
+type MediaRelation = {
+  url?: string | null
+}
+
+type RichPoint = {
+  text?: string | null
+}
+
+type LandingNewsDoc = {
+  id: string | number
+  title?: string | null
+  slug?: string | null
+  excerpt?: string | null
+  content?: unknown
+  publishedAt?: string | null
+  sortOrder?: number | null
+  coverImage?: MediaRelation | null
+}
+
+type LandingReviewDoc = {
+  id: string | number
+  name?: string | null
+  text?: string | null
+  sourceName?: string | null
+  sortOrder?: number | null
+  date?: string | null
+  createdAt?: string | null
+  avatar?: MediaRelation | null
+}
+
+type IntroSlideDoc = {
+  id: string | number
+  title?: string | null
+  text?: string | null
+  image?: MediaRelation | null
+}
+
+type AudienceItemDoc = {
+  id: string | number
+  title?: string | null
+  points?: RichPoint[] | null
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
+type CareerGuidanceItemDoc = {
+  id: string | number
+  title?: string | null
+  price?: string | null
+  points?: RichPoint[] | null
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
+type EntrepreneurshipItemDoc = {
+  id: string | number
+  title?: string | null
+  price?: string | null
+  points?: RichPoint[] | null
+  buttonText?: string | null
+  buttonLink?: string | null
+}
 
 export async function GET() {
   try {
@@ -48,7 +112,7 @@ export async function GET() {
         }),
       ])
 
-    const news = (newsResult.docs ?? []).map((item: any) => ({
+    const news = ((newsResult.docs ?? []) as LandingNewsDoc[]).map((item) => ({
       id: item.id,
       title: item.title ?? '',
       slug: item.slug ?? '',
@@ -59,7 +123,7 @@ export async function GET() {
       image: item.coverImage?.url ?? null,
     }))
 
-    const reviews = (reviewsResult.docs ?? []).map((item: any) => ({
+    const reviews = ((reviewsResult.docs ?? []) as LandingReviewDoc[]).map((item) => ({
       id: item.id,
       name: item.name ?? '',
       text: item.text ?? '',
@@ -90,7 +154,7 @@ export async function GET() {
       introSlider: {
         title: homePageResult?.introSlider?.title ?? null,
         slides: Array.isArray(homePageResult?.introSlider?.slides)
-                ? homePageResult.introSlider.slides.map((item: any) => ({
+                ? (homePageResult.introSlider.slides as IntroSlideDoc[]).map((item) => ({
                     id: item.id,
                     title: item.title ?? '',
                     text: item.text ?? '',
@@ -108,12 +172,12 @@ export async function GET() {
         title: homePageResult?.audience?.title ?? null,
         isVisible: homePageResult?.audience?.isVisible ?? true,
         items: Array.isArray(homePageResult?.audience?.items)
-          ? homePageResult.audience.items.map((item: any) => ({
+          ? (homePageResult.audience.items as AudienceItemDoc[]).map((item) => ({
               id: item.id,
               title: item.title ?? '',
               points: Array.isArray(item.points)
                 ? item.points
-                    .map((point: any) => point?.text?.trim() ?? '')
+                    .map((point: RichPoint) => point.text?.trim() ?? '')
                     .filter(Boolean)
                 : [],
               buttonText: item.buttonText ?? 'Оставить заявку',
@@ -125,13 +189,13 @@ export async function GET() {
         title: homePageResult?.careerGuidance?.title ?? null,
         isVisible: homePageResult?.careerGuidance?.isVisible ?? true,
         items: Array.isArray(homePageResult?.careerGuidance?.items)
-          ? homePageResult.careerGuidance.items.map((item: any) => ({
+          ? (homePageResult.careerGuidance.items as CareerGuidanceItemDoc[]).map((item) => ({
               id: item.id,
               title: item.title ?? '',
               price: item.price ?? '',
               points: Array.isArray(item.points)
                 ? item.points
-                    .map((point: any) => point?.text?.trim() ?? '')
+                    .map((point: RichPoint) => point.text?.trim() ?? '')
                     .filter(Boolean)
                 : [],
               buttonText: item.buttonText ?? 'Купить',
@@ -153,13 +217,13 @@ export async function GET() {
         title: homePageResult?.entrepreneurship?.title ?? null,
         isVisible: homePageResult?.entrepreneurship?.isVisible ?? true,
         items: Array.isArray(homePageResult?.entrepreneurship?.items)
-          ? homePageResult.entrepreneurship.items.map((item: any) => ({
+          ? (homePageResult.entrepreneurship.items as EntrepreneurshipItemDoc[]).map((item) => ({
               id: item.id,
               title: item.title ?? '',
               price: item.price ?? '',
               points: Array.isArray(item.points)
                 ? item.points
-                    .map((point: any) => point?.text?.trim() ?? '')
+                    .map((point: RichPoint) => point.text?.trim() ?? '')
                     .filter(Boolean)
                 : [],
               buttonText: item.buttonText ?? 'Купить',
