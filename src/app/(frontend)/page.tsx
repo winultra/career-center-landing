@@ -504,14 +504,21 @@ function normalizePrice(value: string | null | undefined) {
   return /₽|руб\.?/i.test(normalized) ? normalized : `${normalized} ₽`
 }
 function renderHeroTitle(title: string) {
-  const normalizedTitle = title.trim().replace(/\s+/g, ' ')
+  const normalizedTitle = title
+    .trim()
+    .replace(/[«»]/g, '')
+    .replace(/\s+/g, ' ')
+    .toUpperCase()
 
   if (normalizedTitle === 'ВАШ ПУТЕВОДИТЕЛЬ В МИР КАРЬЕРНЫХ РЕШЕНИЙ') {
     return (
       <>
         <span className="hero-title__muted">ВАШ</span>{' '}
-        <span className="hero-title__blue">ПУТЕВОДИТЕЛЬ В МИР</span>{' '}
-        <span className="hero-title__muted">КАРЬЕРНЫХ</span>{' '}
+        <span className="hero-title__blue">ПУТЕВОДИТЕЛЬ</span>
+        <br />
+        <span className="hero-title__blue">В МИР</span>{' '}
+        <span className="hero-title__muted">КАРЬЕРНЫХ</span>
+        <br />
         <span className="hero-title__blue">РЕШЕНИЙ</span>
       </>
     )
@@ -531,6 +538,20 @@ function renderHeroTitle(title: string) {
         <span className="hero-title__blue">{customParts[3]}</span>
       </>
     )
+  }
+
+  const adminLines = title
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+
+  if (adminLines.length > 1) {
+    return adminLines.map((line, index) => (
+      <span key={`${line}-${index}`}>
+        {line}
+        {index < adminLines.length - 1 ? <br /> : null}
+      </span>
+    ))
   }
 
   return title
