@@ -2945,6 +2945,14 @@ textarea {
     gap: 24px;
   }
 
+  .about-block__content {
+    order: 1;
+  }
+
+  .about-block__media {
+    order: 2;
+  }
+
   .about-block__heading {
     gap: 0;
   }
@@ -2955,6 +2963,7 @@ textarea {
   }
 
   .about-block__media {
+    order: 2;
     justify-content: flex-start;
   }
 
