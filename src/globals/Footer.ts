@@ -1,8 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { isAdminOrEditor } from '@/lib/access'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
   label: 'Подвал',
+  access: {
+    read: isAdminOrEditor,
+    update: isAdminOrEditor,
+  },
   fields: [
     {
       name: 'logo',

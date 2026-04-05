@@ -1,10 +1,18 @@
 import type { CollectionConfig } from 'payload'
+import { isAdmin } from '@/lib/access'
 
 export const Applications: CollectionConfig = {
   slug: 'applications',
   labels: {
     singular: 'Заявка',
     plural: 'Заявки',
+  },
+  access: {
+    admin: isAdmin,
+    create: isAdmin,
+    delete: isAdmin,
+    read: isAdmin,
+    update: isAdmin,
   },
   admin: {
     useAsTitle: 'fullName',

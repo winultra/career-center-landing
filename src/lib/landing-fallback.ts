@@ -22,6 +22,8 @@ export type LandingFallbackResponse = {
     logo: string | null
     siteTitle: string
     siteDescription: string
+    buttonText: string
+    buttonLink: string
   }
   hero: {
     title: string
@@ -101,8 +103,21 @@ export type LandingFallbackResponse = {
     email: string
     isVisible: boolean
   }
+  reviewsSection: {
+    title: string
+    subtitle: string | null
+    isVisible: boolean
+  }
+  newsSection: {
+    title: string
+    subtitle: string | null
+    isVisible: boolean
+  }
   contactSection: {
     title: string
+    subtitle: string | null
+    formTitle: string | null
+    submitButtonText: string | null
     description: string
     phone: string
     email: string
@@ -171,6 +186,8 @@ export const landingResponseFallback: LandingFallbackResponse = {
     logo: '/logo/logo.png',
     siteTitle: landingMetadataFallback.title,
     siteDescription: landingMetadataFallback.description,
+    buttonText: 'Связаться с нами',
+    buttonLink: '#contact-form',
   },
   hero: {
     title: 'ВАШ ПУТЕВОДИТЕЛЬ В МИР КАРЬЕРНЫХ РЕШЕНИЙ',
@@ -315,8 +332,21 @@ export const landingResponseFallback: LandingFallbackResponse = {
     email: 'proforientaciy86',
     isVisible: true,
   },
+  reviewsSection: {
+    title: 'Отзывы',
+    subtitle: null,
+    isVisible: true,
+  },
+  newsSection: {
+    title: 'Новости',
+    subtitle: null,
+    isVisible: true,
+  },
   contactSection: {
     title: 'Связаться с нами',
+    subtitle: null,
+    formTitle: 'Оставить заявку',
+    submitButtonText: 'Отправить',
     description:
       'Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим на все интересующие вас вопросы',
     phone: '+7 (922) 259-84-47',

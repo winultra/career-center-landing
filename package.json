@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "create-admin": "tsx src/scripts/createAdmin.ts"
+    "create-admin": "tsx src/scripts/createAdmin.ts",
+    "bootstrap:users": "tsx src/scripts/createAdmin.ts",
+    "lint": "next lint",
+    "typecheck": "rm -rf .next && tsc --noEmit"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.79.0",

@@ -1,0 +1,11 @@
+.git
+.gitignore
+.next
+node_modules
+npm-debug.log*
+.env*
+media
+coverage
+.DS_Store
+README.md
+DEPLOY.md

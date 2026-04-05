@@ -1,10 +1,18 @@
 import type { CollectionConfig } from 'payload'
+import { isAdminOrEditor } from '@/lib/access'
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
   labels: {
     singular: 'Отзыв',
     plural: 'Отзывы',
+  },
+  access: {
+    admin: isAdminOrEditor,
+    create: isAdminOrEditor,
+    delete: isAdminOrEditor,
+    read: isAdminOrEditor,
+    update: isAdminOrEditor,
   },
   admin: {
     useAsTitle: 'name',

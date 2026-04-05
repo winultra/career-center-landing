@@ -68,6 +68,14 @@ type EntrepreneurshipItemDoc = {
   buttonLink?: string | null
 }
 
+type HomePageSectionDoc = {
+  title?: string | null
+  subtitle?: string | null
+  formTitle?: string | null
+  submitButtonText?: string | null
+  isVisible?: boolean
+}
+
 export async function GET() {
   try {
     const payload = await getPayloadClient()
@@ -76,6 +84,7 @@ export async function GET() {
       await Promise.all([
         payload.find({
           collection: 'news',
+          overrideAccess: true,
           where: {
             isPublished: {
               equals: true,
@@ -87,6 +96,7 @@ export async function GET() {
         }),
         payload.find({
           collection: 'reviews',
+          overrideAccess: true,
           where: {
             isPublished: {
               equals: true,
@@ -98,18 +108,22 @@ export async function GET() {
         }),
         payload.findGlobal({
           slug: 'header',
+          overrideAccess: true,
           depth: 1,
         }),
         payload.findGlobal({
           slug: 'footer',
+          overrideAccess: true,
           depth: 1,
         }),
         payload.findGlobal({
           slug: 'contact-settings',
+          overrideAccess: true,
           depth: 1,
         }),
         payload.findGlobal({
           slug: 'home-page',
+          overrideAccess: true,
           depth: 2,
         }),
       ])
@@ -144,6 +158,8 @@ export async function GET() {
         siteDescription:
           headerResult?.siteDescription ??
           'Центр карьеры, профориентации и предпринимательства для подростков, родителей, молодёжи и начинающих предпринимателей.',
+        buttonText: headerResult?.buttonText ?? 'Связаться с нами',
+        buttonLink: headerResult?.buttonLink ?? '#contact-form',
       },
       hero: {
         title: homePageResult?.hero?.title ?? null,
@@ -234,6 +250,16 @@ export async function GET() {
             }))
           : [],
       },
+      reviewsSection: {
+        title: homePageResult?.reviewsSection?.title ?? 'Отзывы',
+        subtitle: homePageResult?.reviewsSection?.subtitle ?? null,
+        isVisible: homePageResult?.reviewsSection?.isVisible ?? true,
+      },
+      newsSection: {
+        title: homePageResult?.newsSection?.title ?? 'Новости',
+        subtitle: homePageResult?.newsSection?.subtitle ?? null,
+        isVisible: homePageResult?.newsSection?.isVisible ?? true,
+      },
       footer: {
         logo: footerResult?.logo?.url ?? null,
         addressTitle: footerResult?.addressTitle ?? null,
@@ -244,13 +270,23 @@ export async function GET() {
         isVisible: footerResult?.isVisible ?? true,
       },
       contactSection: {
-        title: contactSettingsResult?.title ?? null,
+        title:
+          (homePageResult?.contactSection as HomePageSectionDoc | undefined)?.title ??
+          contactSettingsResult?.title ??
+          null,
+        subtitle: (homePageResult?.contactSection as HomePageSectionDoc | undefined)?.subtitle ?? null,
+        formTitle: (homePageResult?.contactSection as HomePageSectionDoc | undefined)?.formTitle ?? null,
+        submitButtonText:
+          (homePageResult?.contactSection as HomePageSectionDoc | undefined)?.submitButtonText ?? null,
         description: contactSettingsResult?.description ?? null,
         phone: contactSettingsResult?.phone ?? null,
         email: contactSettingsResult?.email ?? null,
         address: contactSettingsResult?.address ?? null,
         image: contactSettingsResult?.image?.url ?? null,
-        isVisible: contactSettingsResult?.isVisible ?? true,
+        isVisible:
+          (homePageResult?.contactSection as HomePageSectionDoc | undefined)?.isVisible ??
+          contactSettingsResult?.isVisible ??
+          true,
       },
     })
   } catch (error) {

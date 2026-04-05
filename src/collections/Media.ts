@@ -1,11 +1,12 @@
 import type { CollectionConfig } from 'payload'
+import { isAdminOrEditor } from '@/lib/access'
 
 export const Media: CollectionConfig = {
   access: {
-    read: () => true,
-    create: ({ req }) => Boolean(req.user),
-    update: ({ req }) => Boolean(req.user),
-    delete: ({ req }) => Boolean(req.user),
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
   },
   slug: 'media',
   labels: {

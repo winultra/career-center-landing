@@ -1,8 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { isAdminOrEditor } from '@/lib/access'
 
 export const SEOSettings: GlobalConfig = {
   slug: 'seo-settings',
   label: 'SEO-настройки',
+  access: {
+    read: isAdminOrEditor,
+    update: isAdminOrEditor,
+  },
   fields: [
     {
       name: 'defaultTitle',

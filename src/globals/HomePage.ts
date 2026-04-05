@@ -1,8 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { isAdminOrEditor } from '@/lib/access'
 
 export const HomePage: GlobalConfig = {
   slug: 'home-page',
   label: 'Главная страница',
+  access: {
+    read: isAdminOrEditor,
+    update: isAdminOrEditor,
+  },
   fields: [
     {
       name: 'hero',
@@ -91,33 +96,6 @@ export const HomePage: GlobalConfig = {
               type: 'text',
               defaultValue: '#contact-form',
             },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'consultations',
-      label: 'Консультации',
-      type: 'group',
-      admin: {
-        disabled: true,
-        condition: () => false,
-      },
-      fields: [
-        { name: 'title', label: 'Заголовок', type: 'text', required: true },
-        { name: 'subtitle', label: 'Подзаголовок', type: 'textarea' },
-        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
-        {
-          name: 'items',
-          label: 'Элементы',
-          type: 'array',
-          maxRows: 20,
-          fields: [
-            { name: 'title', label: 'Заголовок', type: 'text', required: true },
-            { name: 'description', label: 'Описание', type: 'textarea' },
-            { name: 'price', label: 'Цена', type: 'text' },
-            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Оставить заявку' },
-            { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
           ],
         },
       ],

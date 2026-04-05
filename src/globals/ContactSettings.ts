@@ -1,8 +1,13 @@
 import type { GlobalConfig } from 'payload'
+import { isAdminOrEditor } from '@/lib/access'
 
 export const ContactSettings: GlobalConfig = {
   slug: 'contact-settings',
   label: 'Контакты',
+  access: {
+    read: isAdminOrEditor,
+    update: isAdminOrEditor,
+  },
   fields: [
     {
       name: 'title',

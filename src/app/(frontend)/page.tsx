@@ -243,6 +243,8 @@ type LandingHeader = {
   logo?: string | null
   siteTitle?: string | null
   siteDescription?: string | null
+  buttonText?: string | null
+  buttonLink?: string | null
 }
 
 type LandingHero = {
@@ -340,11 +342,20 @@ type LandingFooter = {
 
 type LandingContactSection = {
   title?: string | null
+  subtitle?: string | null
+  formTitle?: string | null
+  submitButtonText?: string | null
   description?: string | null
   phone?: string | null
   email?: string | null
   address?: string | null
   image?: string | null
+  isVisible?: boolean
+}
+
+type LandingSectionHeading = {
+  title?: string | null
+  subtitle?: string | null
   isVisible?: boolean
 }
 
@@ -360,6 +371,8 @@ type LandingResponse = {
   cta?: LandingCta
   entrepreneurship?: LandingEntrepreneurship
   footer?: LandingFooter
+  reviewsSection?: LandingSectionHeading
+  newsSection?: LandingSectionHeading
   contactSection?: LandingContactSection
 }
 
@@ -385,6 +398,8 @@ type FrontendHeaderInfo = {
   logo: string
   siteTitle: string
   siteDescription: string
+  buttonText: string
+  buttonLink: string
 }
 
 type FrontendHeroInfo = {
@@ -470,11 +485,20 @@ type FrontendFooterInfo = {
 
 type FrontendContactSection = {
   title: string
+  subtitle: string
+  formTitle: string
+  submitButtonText: string
   description: string
   phone: string
   email: string
   address: string
   image: string
+  isVisible: boolean
+}
+
+type FrontendSectionHeading = {
+  title: string
+  subtitle: string
   isVisible: boolean
 }
 
@@ -956,6 +980,8 @@ const isGuidanceCardVisible = (index: number) => {
     siteDescription:
       landingData?.header?.siteDescription ??
       'Центр карьеры, профориентации и предпринимательства для подростков, родителей, молодёжи и начинающих предпринимателей.',
+    buttonText: landingData?.header?.buttonText ?? 'Связаться с нами',
+    buttonLink: landingData?.header?.buttonLink ?? '#contact-form',
   }
 
   const resolvedHeroInfo: FrontendHeroInfo = {
@@ -1185,8 +1211,23 @@ const closeMobileMenu = () => {
     isVisible: landingData?.footer?.isVisible ?? true,
   }
 
+  const resolvedReviewsSection: FrontendSectionHeading = {
+    title: landingData?.reviewsSection?.title ?? 'Отзывы',
+    subtitle: landingData?.reviewsSection?.subtitle ?? '',
+    isVisible: landingData?.reviewsSection?.isVisible ?? true,
+  }
+
+  const resolvedNewsSection: FrontendSectionHeading = {
+    title: landingData?.newsSection?.title ?? 'Новости',
+    subtitle: landingData?.newsSection?.subtitle ?? '',
+    isVisible: landingData?.newsSection?.isVisible ?? true,
+  }
+
   const resolvedContactSection: FrontendContactSection = {
     title: landingData?.contactSection?.title ?? 'Связаться с нами',
+    subtitle: landingData?.contactSection?.subtitle ?? '',
+    formTitle: landingData?.contactSection?.formTitle ?? 'Оставить заявку',
+    submitButtonText: landingData?.contactSection?.submitButtonText ?? 'Отправить',
     description:
       landingData?.contactSection?.description ??
       'Оставьте заявку, мы свяжемся с вами, проконсультируем и ответим на все интересующие вас вопросы',
@@ -1401,8 +1442,8 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     ))}
   </nav>
 
-  <a href="#contact-form" className="mobile-menu__contact-button" onClick={closeMobileMenu}>
-    Связаться с нами
+  <a href={resolvedHeaderInfo.buttonLink} className="mobile-menu__contact-button" onClick={closeMobileMenu}>
+    {resolvedHeaderInfo.buttonText}
   </a>
 </aside>
 
@@ -1920,10 +1961,14 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   </section>
 ) : null}
 
+      {resolvedReviewsSection.isVisible ? (
       <section id="reviews" className="reviews-section">
         <div className="container">
           <div className="reviews-section__inner">
-            <h2 className="reviews-section__title">Отзывы</h2>
+            <h2 className="reviews-section__title">{resolvedReviewsSection.title}</h2>
+            {resolvedReviewsSection.subtitle ? (
+              <p className="reviews-section__subtitle">{resolvedReviewsSection.subtitle}</p>
+            ) : null}
 
             <div className="reviews-slider">
               <div className="reviews-slider__viewport" ref={reviewsViewportRef}>
@@ -2017,11 +2062,16 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
         </div>
       </section>
+      ) : null}
 
+      {resolvedNewsSection.isVisible ? (
       <section id="news" className="news-section">
         <div className="container">
           <div className="news-section__inner">
-            <h2 className="news-section__title">Новости</h2>
+            <h2 className="news-section__title">{resolvedNewsSection.title}</h2>
+            {resolvedNewsSection.subtitle ? (
+              <p className="news-section__subtitle">{resolvedNewsSection.subtitle}</p>
+            ) : null}
 
             <div className="news-slider">
               <div className="news-slider__viewport" ref={newsViewportRef}>
@@ -2105,6 +2155,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
         </div>
       </section>
+      ) : null}
 
       {selectedNews ? (
         <div className="news-modal" role="dialog" aria-modal="true" aria-labelledby="news-modal-title">
@@ -2153,9 +2204,15 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       </div>
 
       <div className="contact-section__content">
+        {resolvedContactSection.subtitle ? (
+          <p className="contact-section__subtitle">{resolvedContactSection.subtitle}</p>
+        ) : null}
         <p className="contact-section__lead">{resolvedContactSection.description}</p>
 
         <form className="contact-form" onSubmit={handleContactSubmit} noValidate>
+          {resolvedContactSection.formTitle ? (
+            <h3 className="contact-form__title">{resolvedContactSection.formTitle}</h3>
+          ) : null}
           <input type="hidden" name="sourceBlock" value="contact-form" />
           <input
             type="text"
@@ -2239,7 +2296,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             className="contact-form__submit"
             disabled={isContactSubmitting}
           >
-            {isContactSubmitting ? 'Отправка...' : 'Отправить'}
+            {isContactSubmitting ? 'Отправка...' : resolvedContactSection.submitButtonText}
           </button>
 
           {contactSubmitState.type !== 'idle' ? (

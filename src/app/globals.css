@@ -13,6 +13,14 @@
   color: #4f4f4f;
 }
 
+.news-section__subtitle {
+  margin: -8px 0 18px;
+  max-width: 720px;
+  color: #5d6489;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
 .news-slider {
   display: grid;
   gap: 20px;
@@ -1723,6 +1731,14 @@ textarea {
   color: #ffffff;
 }
 
+.reviews-section__subtitle {
+  margin: -8px 0 18px;
+  max-width: 720px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+  line-height: 1.35;
+}
+
 .reviews-slider {
   display: grid;
   gap: 28px;
@@ -2174,11 +2190,26 @@ textarea {
   line-height: 1.24;
 }
 
+.contact-section__subtitle {
+  margin: 0;
+  max-width: 520px;
+  color: #5d6489;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
 .contact-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
   max-width: 470px;
+}
+
+.contact-form__title {
+  margin: 0;
+  color: #2f3566;
+  font-size: 22px;
+  line-height: 1.15;
 }
 
 .contact-form__honeypot {

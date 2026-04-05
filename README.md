@@ -46,6 +46,9 @@ npm run dev
 npm run build
 npm run start
 npm run create-admin
+npm run bootstrap:users
+npm run lint
+npm run typecheck
 ```
 
 ## Особенности проекта
@@ -57,3 +60,7 @@ npm run create-admin
 ## Стек
 
 `Next.js`, `React`, `Payload CMS`, `PostgreSQL`, `TypeScript`, `Zod`
+
+## Production
+
+Подробный production deployment-flow для одного VPS описан в [DEPLOY.md](./DEPLOY.md).

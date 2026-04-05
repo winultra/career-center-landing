@@ -4,6 +4,7 @@ import { buildConfig } from 'payload'
 import { ru } from '@payloadcms/translations/languages/ru'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { env } from './src/lib/env.ts'
 
 import { Users } from './src/collections/Users.ts'
 import { Media } from './src/collections/Media.ts'
@@ -21,17 +22,17 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: env.PAYLOAD_SECRET,
   editor: lexicalEditor(),
   collections: [Users, Media, News, Reviews, Applications],
   globals: [Header, HomePage, ContactSettings, Footer, SEOSettings],
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: env.DATABASE_URL,
     },
   }),
-  cors: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'],
-  csrf: [process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'],
+  cors: [env.NEXT_PUBLIC_SERVER_URL],
+  csrf: [env.NEXT_PUBLIC_SERVER_URL],
   admin: {
     user: 'users',
     importMap: {
