@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 
 import { getPayloadClient } from '@/lib/payload'
+import { landingResponseFallback } from '@/lib/landing-fallback'
 
 type MediaRelation = {
   url?: string | null
@@ -253,13 +254,8 @@ export async function GET() {
       },
     })
   } catch (error) {
-    console.error('GET /api/public/landing failed', error)
+    console.error('GET /api/public/landing failed, fallback response returned', error)
 
-    return NextResponse.json(
-      {
-        error: 'Failed to load landing content',
-      },
-      { status: 500 },
-    )
+    return NextResponse.json(landingResponseFallback)
   }
 }

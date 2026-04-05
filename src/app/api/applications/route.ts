@@ -55,12 +55,17 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error('Application submit error:', error)
 
+    const message =
+      error instanceof Error && 'payloadInitError' in error
+        ? 'Сервис заявок временно недоступен. Проверьте подключение к Postgres и попробуйте снова.'
+        : 'Внутренняя ошибка сервера'
+
     return NextResponse.json(
       {
         success: false,
-        message: 'Внутренняя ошибка сервера',
+        message,
       },
-      { status: 500 },
+      { status: message === 'Внутренняя ошибка сервера' ? 500 : 503 },
     )
   }
 }

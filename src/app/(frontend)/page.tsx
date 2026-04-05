@@ -1193,7 +1193,7 @@ const closeMobileMenu = () => {
     phone: landingData?.contactSection?.phone ?? resolvedFooterInfo.phone,
     email: landingData?.contactSection?.email ?? resolvedFooterInfo.email,
     address: landingData?.contactSection?.address ?? resolvedFooterInfo.addressText,
-    image: landingData?.contactSection?.image ?? '/images/сontact_as.png',
+    image: landingData?.contactSection?.image ?? '/images/contact_as.png',
     isVisible: landingData?.contactSection?.isVisible ?? true,
   }
 
