@@ -559,8 +559,10 @@ function normalizeLandingNewsContent(content: unknown, fallback: string) {
     if (Array.isArray(value)) return value.map(extractText).join('')
     if (!value || typeof value !== 'object') return ''
 
-    const node = value as { text?: unknown; type?: unknown; children?: unknown }
+    const node = value as { root?: unknown; text?: unknown; type?: unknown; children?: unknown }
+    if (node.root) return extractText(node.root)
     if (typeof node.text === 'string') return node.text
+    if (node.type === 'linebreak') return '\n'
     if (!Array.isArray(node.children)) return ''
 
     const text = node.children.map(extractText).join('')
