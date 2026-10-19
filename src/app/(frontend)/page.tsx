@@ -292,6 +292,7 @@ type LandingAudience = {
 type LandingConsultationCard = {
   title?: string | null
   items?: string[]
+  price?: string | null
   buttonText?: string | null
   buttonLink?: string | null
 }
@@ -353,6 +354,8 @@ type LandingFooter = {
   contactTitle?: string | null
   phone?: string | null
   email?: string | null
+  contactText?: string | null
+  contactLink?: string | null
   isVisible?: boolean
 }
 
@@ -454,6 +457,7 @@ type FrontendAudienceInfo = {
 type FrontendConsultationCard = {
   title: string
   items: string[]
+  price: string
   buttonText: string
   buttonLink: string
   theme: 'light' | 'dark'
@@ -512,6 +516,8 @@ type FrontendFooterInfo = {
   contactTitle: string
   phone: string
   email: string
+  contactText: string
+  contactLink: string
   isVisible: boolean
 }
 
@@ -1088,6 +1094,7 @@ const isGuidanceCardVisible = (index: number) => {
           landingData.consultations.leftCard.items.length > 0
             ? landingData.consultations.leftCard.items
             : consultationCards[0].items,
+        price: landingData?.consultations?.leftCard?.price ?? '',
         buttonText: landingData?.consultations?.leftCard?.buttonText ?? 'Купить',
         buttonLink: landingData?.consultations?.leftCard?.buttonLink ?? '#contact-form',
         theme: 'light',
@@ -1100,6 +1107,7 @@ const isGuidanceCardVisible = (index: number) => {
           landingData.consultations.rightCard.items.length > 0
             ? landingData.consultations.rightCard.items
             : consultationCards[1].items,
+        price: landingData?.consultations?.rightCard?.price ?? '',
         buttonText: landingData?.consultations?.rightCard?.buttonText ?? 'Купить',
         buttonLink: landingData?.consultations?.rightCard?.buttonLink ?? '#contact-form',
         theme: 'dark',
@@ -1299,6 +1307,9 @@ const closeMobileMenu = () => {
     contactTitle: landingData?.footer?.contactTitle ?? footerInfo.contactTitle,
     phone: landingData?.footer?.phone ?? footerInfo.phone,
     email: landingData?.footer?.email ?? footerInfo.email,
+    contactText:
+      landingData?.footer?.contactText ?? landingData?.footer?.email ?? footerInfo.email,
+    contactLink: landingData?.footer?.contactLink ?? '',
     isVisible: landingData?.footer?.isVisible ?? true,
   }
 
@@ -1826,13 +1837,16 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                     ))}
                   </ul>
 
-                  <a
-                    href={card.buttonLink}
-                    className="button button--consultation"
-                    {...externalLinkProps(card.buttonLink)}
-                  >
-                    {card.buttonText}
-                  </a>
+                  <div className="consultation-card__purchase">
+                    {card.price ? <span className="consultation-card__price">{card.price}</span> : null}
+                    <a
+                      href={card.buttonLink}
+                      className="button button--consultation"
+                      {...externalLinkProps(card.buttonLink)}
+                    >
+                      {card.buttonText}
+                    </a>
+                  </div>
                 </article>
               ))}
             </div>
@@ -2480,11 +2494,13 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                 {resolvedFooterInfo.phone}
               </a>
               <a
-                href={normalizeEmailLink(resolvedFooterInfo.email)}
+                href={resolvedFooterInfo.contactLink || normalizeEmailLink(resolvedFooterInfo.email)}
                 className="site-footer__link"
-                {...externalLinkProps(resolvedFooterInfo.email)}
+                {...externalLinkProps(
+                  resolvedFooterInfo.contactLink || normalizeEmailLink(resolvedFooterInfo.email),
+                )}
               >
-                {resolvedFooterInfo.email}
+                {resolvedFooterInfo.contactText}
               </a>
             </div>
           </div>

@@ -158,9 +158,11 @@ CREATE TABLE IF NOT EXISTS home_page (
   consultations_title varchar DEFAULT 'Консультации',
   consultations_is_visible boolean DEFAULT true,
   consultations_left_card_title varchar,
+  consultations_left_card_price varchar,
   consultations_left_card_button_text varchar DEFAULT 'Купить',
   consultations_left_card_button_link varchar DEFAULT '#contact-form',
   consultations_right_card_title varchar,
+  consultations_right_card_price varchar,
   consultations_right_card_button_text varchar DEFAULT 'Купить',
   consultations_right_card_button_link varchar DEFAULT '#contact-form',
   career_guidance_title varchar,
@@ -335,6 +337,11 @@ CREATE INDEX IF NOT EXISTS payload_locked_documents_rels_reviews_idx ON payload_
 CREATE INDEX IF NOT EXISTS payload_locked_documents_rels_applications_idx ON payload_locked_documents_rels(applications_id);
 
 ALTER TABLE IF EXISTS footer ADD COLUMN IF NOT EXISTS address_link varchar;
+ALTER TABLE IF EXISTS footer ADD COLUMN IF NOT EXISTS contact_text varchar;
+ALTER TABLE IF EXISTS footer ADD COLUMN IF NOT EXISTS contact_link varchar;
+UPDATE footer SET contact_text = email WHERE contact_text IS NULL AND email IS NOT NULL;
+ALTER TABLE IF EXISTS home_page ADD COLUMN IF NOT EXISTS consultations_left_card_price varchar;
+ALTER TABLE IF EXISTS home_page ADD COLUMN IF NOT EXISTS consultations_right_card_price varchar;
 ALTER TABLE IF EXISTS home_page ADD COLUMN IF NOT EXISTS consultations_left_card_button_text varchar DEFAULT 'Купить';
 ALTER TABLE IF EXISTS home_page ADD COLUMN IF NOT EXISTS consultations_left_card_button_link varchar DEFAULT '#contact-form';
 ALTER TABLE IF EXISTS home_page ADD COLUMN IF NOT EXISTS consultations_right_card_button_text varchar DEFAULT 'Купить';

@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '@/lib/access'
+import { PublishedCell } from '@/components/admin/PublishedCell'
 
 function slugify(value: string) {
   return value
@@ -95,6 +96,11 @@ export const News: CollectionConfig = {
       label: 'Опубликовано',
       type: 'checkbox',
       defaultValue: true,
+      admin: {
+        components: {
+          Cell: PublishedCell as never,
+        },
+      },
     },
     {
       name: 'sortOrder',

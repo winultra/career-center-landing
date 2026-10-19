@@ -49,9 +49,29 @@ export const Footer: GlobalConfig = {
     },
     {
       name: 'email',
-      label: 'Email или контактная строка',
+      label: 'Старая контактная строка',
       type: 'text',
       defaultValue: 'proforientaciy86',
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'contactText',
+      label: 'Текст контакта',
+      type: 'text',
+      defaultValue: 'proforientaciy86',
+      admin: {
+        description: 'Текст, который будет показан посетителю в подвале, например «Группа ВКонтакте».',
+      },
+    },
+    {
+      name: 'contactLink',
+      label: 'Ссылка контакта',
+      type: 'text',
+      admin: {
+        description: 'Ссылка для текста контакта. Внешние ссылки откроются в новой вкладке.',
+      },
     },
     {
       name: 'isVisible',

@@ -58,6 +58,7 @@ type AudienceItemDoc = {
 type ConsultationCardDoc = {
   title?: string | null
   items?: RichPoint[] | null
+  price?: string | null
   buttonText?: string | null
   buttonLink?: string | null
 }
@@ -237,6 +238,7 @@ export async function GET() {
                 .map((point: RichPoint) => point.text?.trim() ?? '')
                 .filter(Boolean)
             : [],
+          price: (homePageResult?.consultations?.leftCard as ConsultationCardDoc | undefined)?.price ?? null,
           buttonText:
             (homePageResult?.consultations?.leftCard as ConsultationCardDoc | undefined)?.buttonText ?? 'Купить',
           buttonLink:
@@ -253,6 +255,7 @@ export async function GET() {
                 .map((point: RichPoint) => point.text?.trim() ?? '')
                 .filter(Boolean)
             : [],
+          price: (homePageResult?.consultations?.rightCard as ConsultationCardDoc | undefined)?.price ?? null,
           buttonText:
             (homePageResult?.consultations?.rightCard as ConsultationCardDoc | undefined)?.buttonText ?? 'Купить',
           buttonLink:
@@ -323,6 +326,8 @@ export async function GET() {
         contactTitle: footerResult?.contactTitle ?? null,
         phone: footerResult?.phone ?? null,
         email: footerResult?.email ?? null,
+        contactText: footerResult?.contactText ?? footerResult?.email ?? null,
+        contactLink: footerResult?.contactLink ?? null,
         isVisible: footerResult?.isVisible ?? true,
       },
       contactSection: {

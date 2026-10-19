@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '@/lib/access'
+import { PublishedCell } from '@/components/admin/PublishedCell'
 
 export const Reviews: CollectionConfig = {
   slug: 'reviews',
@@ -65,6 +66,11 @@ export const Reviews: CollectionConfig = {
       label: 'Опубликовано',
       type: 'checkbox',
       defaultValue: true,
+      admin: {
+        components: {
+          Cell: PublishedCell as never,
+        },
+      },
     },
   ],
 }
