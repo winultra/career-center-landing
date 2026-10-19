@@ -3,7 +3,7 @@ import { isAdminOrEditor } from '@/lib/access'
 
 export const Media: CollectionConfig = {
   access: {
-    read: isAdminOrEditor,
+    read: () => true,
     create: isAdminOrEditor,
     update: isAdminOrEditor,
     delete: isAdminOrEditor,
@@ -16,6 +16,15 @@ export const Media: CollectionConfig = {
   upload: {
     staticDir: 'media',
     mimeTypes: ['image/*'],
+    focalPoint: true,
+    imageSizes: [
+      {
+        name: 'newsCover',
+        width: 1200,
+        height: 800,
+        position: 'centre',
+      },
+    ],
   },
   fields: [
     {

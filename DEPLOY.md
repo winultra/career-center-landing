@@ -12,6 +12,7 @@
 ### Обязательные env
 
 Создайте `.env.production` на сервере по образцу `.env.example`.
+Файл `.env.production` хранится только на сервере и не должен попадать в git.
 
 Обязательные переменные:
 
@@ -50,10 +51,10 @@ docker compose --env-file .env.production run --rm app npm run bootstrap:users
 
 ### Персистентные данные
 
-Нельзя удалять Docker volumes:
+Нельзя удалять Docker volume и каталог загрузок:
 
 - `postgres_data` для PostgreSQL
-- `media_data` для Payload uploads
+- `./media` для Payload uploads
 
 ### nginx
 

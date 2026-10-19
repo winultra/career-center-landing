@@ -1097,6 +1097,8 @@ textarea {
 
 .consultation-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 508px;
   padding: 40px 44px 36px;
   border-radius: 14px;
@@ -1136,7 +1138,7 @@ textarea {
 
 .consultation-card--dark .consultation-card__title {
   color:#ffffff;
-  white-space: nowrap;
+  overflow-wrap: break-word;
 }
 
 
@@ -1146,6 +1148,7 @@ textarea {
   list-style: none;
   display: grid;
   gap: 26px;
+  flex: 1;
 }
 
 .consultation-card__list li {
@@ -1161,6 +1164,37 @@ textarea {
 
 .consultation-card--dark .consultation-card__list li {
   color: #ffffff;
+}
+
+.button--consultation {
+  align-self: flex-start;
+  justify-content: center;
+  min-width: 154px;
+  min-height: 46px;
+  margin-top: 26px;
+  padding: 11px 24px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #0f78b4 0%, #0a5b86 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 8px 18px rgba(11, 111, 167, 0.18);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.consultation-card--dark .button--consultation {
+  background: #ffffff;
+  color: #0a5b86;
+}
+
+.button--consultation:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(11, 111, 167, 0.28);
+}
+
+.guidance-slider--static .guidance-slider__track {
+  justify-content: center;
 }
 
 .consultations-layout__decor {
@@ -1516,9 +1550,9 @@ textarea {
 
 .entrepreneurship-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
-  max-width: 920px;
+  max-width: 1180px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -2682,6 +2716,7 @@ textarea {
 
   .entrepreneurship-grid {
     max-width: 760px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .reviews-slider__track {

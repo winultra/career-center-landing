@@ -35,6 +35,7 @@ export type LandingFallbackResponse = {
   }
   introSlider: {
     title: string | null
+    isVisible: boolean
     slides: Array<{
       id: string
       title: string
@@ -59,6 +60,18 @@ export type LandingFallbackResponse = {
       buttonText: string
       buttonLink: string
     }>
+  }
+  consultations: {
+    title: string
+    isVisible: boolean
+    leftCard: {
+      title: string
+      items: string[]
+    }
+    rightCard: {
+      title: string
+      items: string[]
+    }
   }
   careerGuidance: {
     title: string
@@ -128,9 +141,9 @@ export type LandingFallbackResponse = {
 }
 
 export const landingMetadataFallback = {
-  title: 'ПрофСтарт',
+  title: 'ПрофСтарт — профориентация, карьера и предпринимательство в Югорске',
   description:
-    'Центр карьеры, профориентации и предпринимательства для подростков, родителей, молодёжи и начинающих предпринимателей.',
+    'Центр ПрофСтарт в Югорске помогает подросткам, родителям и молодёжи выбрать профессию, развивать карьеру и запускать предпринимательские проекты.',
 }
 
 export const landingResponseFallback: LandingFallbackResponse = {
@@ -199,6 +212,7 @@ export const landingResponseFallback: LandingFallbackResponse = {
   },
   introSlider: {
     title: null,
+    isVisible: true,
     slides: [
       {
         id: 'slide-1',
@@ -256,6 +270,31 @@ export const landingResponseFallback: LandingFallbackResponse = {
         buttonLink: '#contact-form',
       },
     ],
+  },
+  consultations: {
+    title: 'Консультации',
+    isVisible: true,
+    leftCard: {
+      title: 'Профориентации подростка',
+      items: [
+        'курс «Профессия по призванию»',
+        'подростковый профориентационный клуб',
+        'индивидуальные консультации и диагностики',
+        'профориентационные мероприятия',
+        'проф-туры по России',
+      ],
+    },
+    rightCard: {
+      title: 'Бизнес-консультация',
+      items: [
+        'помощь в запуске бизнеса с нуля',
+        'бизнес-планирование',
+        'сопровождение в первый год работы',
+        'помощь с мерами господдержки (при наличии условий)',
+        'обучающие семинары и тренинги',
+        'работа с действующими предпринимателями',
+      ],
+    },
   },
   careerGuidance: {
     title: 'Профориентация',

@@ -28,6 +28,7 @@ export const HomePage: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'title', label: 'Заголовок секции', type: 'text' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
         {
           name: 'slides',
           label: 'Слайды',
@@ -101,6 +102,53 @@ export const HomePage: GlobalConfig = {
       ],
     },
     {
+      name: 'consultations',
+      label: 'Консультации',
+      type: 'group',
+      fields: [
+        { name: 'title', label: 'Заголовок блока', type: 'text', defaultValue: 'Консультации' },
+        { name: 'isVisible', label: 'Показывать блок', type: 'checkbox', defaultValue: true },
+        {
+          name: 'leftCard',
+          label: 'Левая карточка',
+          type: 'group',
+          fields: [
+            { name: 'title', label: 'Заголовок карточки', type: 'text', required: true },
+            {
+              name: 'items',
+              label: 'Пункты',
+              type: 'array',
+              maxRows: 20,
+              fields: [
+                { name: 'text', label: 'Текст пункта', type: 'text', required: true },
+              ],
+            },
+            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Купить' },
+            { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
+          ],
+        },
+        {
+          name: 'rightCard',
+          label: 'Правая карточка',
+          type: 'group',
+          fields: [
+            { name: 'title', label: 'Заголовок карточки', type: 'text', required: true },
+            {
+              name: 'items',
+              label: 'Пункты',
+              type: 'array',
+              maxRows: 20,
+              fields: [
+                { name: 'text', label: 'Текст пункта', type: 'text', required: true },
+              ],
+            },
+            { name: 'buttonText', label: 'Текст кнопки', type: 'text', defaultValue: 'Купить' },
+            { name: 'buttonLink', label: 'Ссылка кнопки', type: 'text', defaultValue: '#contact-form' },
+          ],
+        },
+      ],
+    },
+    {
       name: 'careerGuidance',
       label: 'Профориентация',
       type: 'group',
@@ -111,8 +159,6 @@ export const HomePage: GlobalConfig = {
           name: 'items',
           label: 'Карточки',
           type: 'array',
-          minRows: 4,
-          maxRows: 20,
           fields: [
             { name: 'title', label: 'Название услуги', type: 'text', required: true },
             { name: 'price', label: 'Стоимость', type: 'text', required: true },
@@ -164,7 +210,6 @@ export const HomePage: GlobalConfig = {
           label: 'Карточки',
           type: 'array',
           minRows: 1,
-          maxRows: 3,
           fields: [
             { name: 'title', label: 'Заголовок', type: 'text', required: true },
             { name: 'price', label: 'Сумма', type: 'text', required: true },

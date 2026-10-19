@@ -6,6 +6,11 @@ import { landingResponseFallback } from '@/lib/landing-fallback'
 
 type MediaRelation = {
   url?: string | null
+  sizes?: {
+    newsCover?: MediaRelation | null
+  } | null
+  focalX?: number | null
+  focalY?: number | null
 }
 
 type RichPoint = {
@@ -50,6 +55,13 @@ type AudienceItemDoc = {
   buttonLink?: string | null
 }
 
+type ConsultationCardDoc = {
+  title?: string | null
+  items?: RichPoint[] | null
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
 type CareerGuidanceItemDoc = {
   id: string | number
   title?: string | null
@@ -86,9 +98,15 @@ export async function GET() {
           collection: 'news',
           overrideAccess: true,
           where: {
-            isPublished: {
-              equals: true,
-            },
+            and: [
+              { isPublished: { equals: true } },
+              {
+                or: [
+                  { publishedAt: { exists: false } },
+                  { publishedAt: { less_than_equal: new Date().toISOString() } },
+                ],
+              },
+            ],
           },
           sort: ['sortOrder', '-publishedAt'],
           depth: 1,
@@ -136,7 +154,7 @@ export async function GET() {
       content: item.content ?? null,
       publishedAt: item.publishedAt ?? null,
       sortOrder: item.sortOrder ?? 0,
-      image: item.coverImage?.url ?? null,
+      image: item.coverImage?.sizes?.newsCover?.url ?? item.coverImage?.url ?? null,
     }))
 
     const reviews = ((reviewsResult.docs ?? []) as LandingReviewDoc[]).map((item) => ({
@@ -171,6 +189,7 @@ export async function GET() {
       },
       introSlider: {
         title: homePageResult?.introSlider?.title ?? null,
+        isVisible: homePageResult?.introSlider?.isVisible ?? true,
         slides: Array.isArray(homePageResult?.introSlider?.slides)
           ? (homePageResult.introSlider.slides as IntroSlideDoc[]).map((item) => ({
               id: item.id,
@@ -203,6 +222,42 @@ export async function GET() {
               buttonLink: item.buttonLink ?? '#contact-form',
             }))
           : [],
+      },
+      consultations: {
+        title: homePageResult?.consultations?.title ?? 'Консультации',
+        isVisible: homePageResult?.consultations?.isVisible ?? true,
+        leftCard: {
+          title:
+            (homePageResult?.consultations?.leftCard as ConsultationCardDoc | undefined)?.title ??
+            'Профориентации подростка',
+          items: Array.isArray(
+            (homePageResult?.consultations?.leftCard as ConsultationCardDoc | undefined)?.items,
+          )
+            ? ((homePageResult?.consultations?.leftCard as ConsultationCardDoc).items ?? [])
+                .map((point: RichPoint) => point.text?.trim() ?? '')
+                .filter(Boolean)
+            : [],
+          buttonText:
+            (homePageResult?.consultations?.leftCard as ConsultationCardDoc | undefined)?.buttonText ?? 'Купить',
+          buttonLink:
+            (homePageResult?.consultations?.leftCard as ConsultationCardDoc | undefined)?.buttonLink ?? '#contact-form',
+        },
+        rightCard: {
+          title:
+            (homePageResult?.consultations?.rightCard as ConsultationCardDoc | undefined)?.title ??
+            'Бизнес-консультация',
+          items: Array.isArray(
+            (homePageResult?.consultations?.rightCard as ConsultationCardDoc | undefined)?.items,
+          )
+            ? ((homePageResult?.consultations?.rightCard as ConsultationCardDoc).items ?? [])
+                .map((point: RichPoint) => point.text?.trim() ?? '')
+                .filter(Boolean)
+            : [],
+          buttonText:
+            (homePageResult?.consultations?.rightCard as ConsultationCardDoc | undefined)?.buttonText ?? 'Купить',
+          buttonLink:
+            (homePageResult?.consultations?.rightCard as ConsultationCardDoc | undefined)?.buttonLink ?? '#contact-form',
+        },
       },
       careerGuidance: {
         title: homePageResult?.careerGuidance?.title ?? null,
@@ -264,6 +319,7 @@ export async function GET() {
         logo: footerResult?.logo?.url ?? null,
         addressTitle: footerResult?.addressTitle ?? null,
         addressText: footerResult?.addressText ?? null,
+        addressLink: footerResult?.addressLink ?? null,
         contactTitle: footerResult?.contactTitle ?? null,
         phone: footerResult?.phone ?? null,
         email: footerResult?.email ?? null,

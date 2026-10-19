@@ -23,7 +23,7 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
-      - media_data:/app/media
+      - ./media:/app/media
     healthcheck:
       test:
         [
@@ -36,6 +36,11 @@ services:
       timeout: 5s
       retries: 5
       start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "1"
 
   postgres:
     image: postgres:16-alpine
@@ -54,7 +59,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: "1m"
+        max-file: "1"
 
 volumes:
   postgres_data:
-  media_data:

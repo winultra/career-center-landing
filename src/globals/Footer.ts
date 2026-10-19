@@ -28,6 +28,14 @@ export const Footer: GlobalConfig = {
       defaultValue: 'г. Югорск ул. 40 лет Победы, 11 А',
     },
     {
+      name: 'addressLink',
+      label: 'Ссылка адреса (необязательно)',
+      type: 'text',
+      admin: {
+        description: 'Если указана, текст адреса станет ссылкой. Для внешних ссылок откроется новая вкладка.',
+      },
+    },
+    {
       name: 'contactTitle',
       label: 'Заголовок контактов',
       type: 'text',

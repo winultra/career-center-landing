@@ -1,6 +1,24 @@
 import type { CollectionConfig } from 'payload'
 import { isAdminOrEditor } from '@/lib/access'
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[ъь]/g, '')
+    .replace(/ё/g, 'e')
+    .replace(/[^a-zа-я0-9]+/gi, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/[а-я]/g, (character) => {
+      const transliteration: Record<string, string> = {
+        а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ж: 'zh', з: 'z', и: 'i', й: 'j', к: 'k', л: 'l', м: 'm',
+        н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'c', ч: 'ch', ш: 'sh', щ: 'shh',
+        ы: 'y', э: 'e', ю: 'yu', я: 'ya',
+      }
+      return transliteration[character] ?? character
+    })
+}
+
 export const News: CollectionConfig = {
   slug: 'news',
   labels: {
@@ -18,6 +36,16 @@ export const News: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'publishedAt', 'isPublished'],
   },
+  hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (data && typeof data.title === 'string' && !data.slug) {
+          data.slug = slugify(data.title) || `news-${Date.now()}`
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'title',
@@ -29,8 +57,11 @@ export const News: CollectionConfig = {
       name: 'slug',
       label: 'Slug',
       type: 'text',
-      required: true,
+      required: false,
       unique: true,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'excerpt',

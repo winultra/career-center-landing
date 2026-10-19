@@ -264,6 +264,7 @@ type LandingIntroSlide = {
 }
 type LandingIntroSlider = {
   title?: string | null
+  isVisible?: boolean
   slides?: LandingIntroSlide[]
 }
 
@@ -286,6 +287,20 @@ type LandingAudience = {
   title?: string | null
   isVisible?: boolean
   items?: LandingAudienceItem[]
+}
+
+type LandingConsultationCard = {
+  title?: string | null
+  items?: string[]
+  buttonText?: string | null
+  buttonLink?: string | null
+}
+
+type LandingConsultations = {
+  title?: string | null
+  isVisible?: boolean
+  leftCard?: LandingConsultationCard
+  rightCard?: LandingConsultationCard
 }
 
 type LandingCareerGuidanceItem = {
@@ -334,6 +349,7 @@ type LandingFooter = {
   logo?: string | null
   addressTitle?: string | null
   addressText?: string | null
+  addressLink?: string | null
   contactTitle?: string | null
   phone?: string | null
   email?: string | null
@@ -367,6 +383,7 @@ type LandingResponse = {
   introSlider?: LandingIntroSlider
   about?: LandingAbout
   audience?: LandingAudience
+  consultations?: LandingConsultations
   careerGuidance?: LandingCareerGuidance
   cta?: LandingCta
   entrepreneurship?: LandingEntrepreneurship
@@ -434,6 +451,20 @@ type FrontendAudienceInfo = {
   items: FrontendAudienceCard[]
 }
 
+type FrontendConsultationCard = {
+  title: string
+  items: string[]
+  buttonText: string
+  buttonLink: string
+  theme: 'light' | 'dark'
+}
+
+type FrontendConsultationsInfo = {
+  title: string
+  isVisible: boolean
+  cards: FrontendConsultationCard[]
+}
+
 type FrontendGuidanceCard = {
   title: string
   price: string
@@ -477,6 +508,7 @@ type FrontendFooterInfo = {
   logo: string
   addressTitle: string
   addressText: string
+  addressLink: string
   contactTitle: string
   phone: string
   email: string
@@ -526,6 +558,19 @@ function normalizePrice(value: string | null | undefined) {
   }
 
   return /₽|руб\.?/i.test(normalized) ? normalized : `${normalized} ₽`
+}
+function isAnchorLink(value: string | null | undefined) {
+  return Boolean(value?.trim().startsWith('#'))
+}
+function externalLinkProps(value: string | null | undefined) {
+  return isAnchorLink(value)
+    ? { target: undefined, rel: undefined }
+    : { target: '_blank' as const, rel: 'noreferrer noopener' }
+}
+function normalizeEmailLink(value: string) {
+  if (/^(mailto:|https?:\/\/|tel:)/i.test(value)) return value
+  if (value.includes('@')) return `mailto:${value}`
+  return value
 }
 function renderHeroTitle(title: string) {
   const normalizedTitle = title
@@ -639,12 +684,6 @@ const guidanceCards = [
     buttonLink: '#contact-form',
   },
 ]
-const guidanceLoopCards = [
-  ...guidanceCards.slice(-3),
-  ...guidanceCards,
-  ...guidanceCards.slice(0, 3),
-]
-
 function renderHighlightedWords(text: string, words: string[]) {
   let result: React.ReactNode[] = [text]
 
@@ -835,6 +874,7 @@ useEffect(() => {
 }, [])
 
   const goGuidancePrev = () => {
+  if (!guidanceCanSlide || isGuidanceSliding) return
   setIsGuidanceSliding(true)
   setGuidanceDirection('prev')
   setIsGuidanceTransitionEnabled(true)
@@ -842,6 +882,7 @@ useEffect(() => {
 }
 
 const goGuidanceNext = () => {
+  if (!guidanceCanSlide || isGuidanceSliding) return
   setIsGuidanceSliding(true)
   setGuidanceDirection('next')
   setIsGuidanceTransitionEnabled(true)
@@ -849,9 +890,9 @@ const goGuidanceNext = () => {
 }
 
 const handleGuidanceTransitionEnd = () => {
-  if (guidanceIndex === 2) {
+  if (guidanceIndex === guidanceCloneCount - 1) {
     setIsGuidanceTransitionEnabled(false)
-    setGuidanceIndex(guidanceCards.length + 2)
+    setGuidanceIndex(resolvedCareerGuidanceInfo.items.length + guidanceCloneCount - 1)
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         setIsGuidanceSliding(false)
@@ -861,9 +902,9 @@ const handleGuidanceTransitionEnd = () => {
     return
   }
 
-  if (guidanceIndex === guidanceCards.length + 3) {
+  if (guidanceIndex === resolvedCareerGuidanceInfo.items.length + guidanceCloneCount) {
     setIsGuidanceTransitionEnabled(false)
-    setGuidanceIndex(3)
+    setGuidanceIndex(guidanceCloneCount)
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         setIsGuidanceSliding(false)
@@ -890,6 +931,7 @@ useEffect(() => {
 }, [isGuidanceTransitionEnabled])
 
 const isGuidanceCardVisible = (index: number) => {
+  if (!guidanceCanSlide) return true
   const delta = index - guidanceIndex
 
   if (isGuidanceMobile) {
@@ -909,15 +951,15 @@ const isGuidanceCardVisible = (index: number) => {
   }
 
   if (!isGuidanceSliding) {
-    return delta >= 0 && delta <= 2
+    return delta >= 0 && delta < guidanceVisibleCount
   }
 
   if (guidanceDirection === 'next') {
-    return delta >= -1 && delta <= 2
+    return delta >= -1 && delta < guidanceVisibleCount
   }
 
   if (guidanceDirection === 'prev') {
-    return delta >= 0 && delta <= 3
+  return delta >= 0 && delta <= guidanceVisibleCount
   }
 
   return false
@@ -1004,6 +1046,7 @@ const isGuidanceCardVisible = (index: number) => {
         href: slide.link?.trim() || undefined,
       }))
     : bannerSlides
+  const isBannerSectionVisible = landingData?.introSlider?.isVisible ?? true
   const bannerSlideCount = resolvedBannerSlides.length
   const resolvedAboutInfo: FrontendAboutInfo = {
     title: landingData?.about?.title ?? 'О нас',
@@ -1033,6 +1076,37 @@ const isGuidanceCardVisible = (index: number) => {
           })),
   }
 
+  const resolvedConsultationsInfo: FrontendConsultationsInfo = {
+    title: landingData?.consultations?.title ?? 'Консультации',
+    isVisible: landingData?.consultations?.isVisible ?? true,
+    cards: [
+      {
+        title: landingData?.consultations?.leftCard?.title ?? consultationCards[0].title,
+        items:
+          !isLandingDataLoading &&
+          Array.isArray(landingData?.consultations?.leftCard?.items) &&
+          landingData.consultations.leftCard.items.length > 0
+            ? landingData.consultations.leftCard.items
+            : consultationCards[0].items,
+        buttonText: landingData?.consultations?.leftCard?.buttonText ?? 'Купить',
+        buttonLink: landingData?.consultations?.leftCard?.buttonLink ?? '#contact-form',
+        theme: 'light',
+      },
+      {
+        title: landingData?.consultations?.rightCard?.title ?? consultationCards[1].title,
+        items:
+          !isLandingDataLoading &&
+          Array.isArray(landingData?.consultations?.rightCard?.items) &&
+          landingData.consultations.rightCard.items.length > 0
+            ? landingData.consultations.rightCard.items
+            : consultationCards[1].items,
+        buttonText: landingData?.consultations?.rightCard?.buttonText ?? 'Купить',
+        buttonLink: landingData?.consultations?.rightCard?.buttonLink ?? '#contact-form',
+        theme: 'dark',
+      },
+    ],
+  }
+
   const resolvedCareerGuidanceInfo: FrontendCareerGuidanceInfo = {
     title: landingData?.careerGuidance?.title ?? 'Профориентация',
     isVisible: landingData?.careerGuidance?.isVisible ?? true,
@@ -1040,10 +1114,10 @@ const isGuidanceCardVisible = (index: number) => {
       !isLandingDataLoading &&
       Array.isArray(landingData?.careerGuidance?.items) &&
       landingData.careerGuidance.items.length > 0
-        ? landingData.careerGuidance.items.slice(0, 20).map((item) => ({
+        ? landingData.careerGuidance.items.map((item) => ({
             title: item.title ?? '',
             price: normalizePrice(item.price),
-            items: Array.isArray(item.points) ? item.points.slice(0, 6) : [],
+            items: Array.isArray(item.points) ? item.points : [],
             buttonText: item.buttonText ?? 'Купить',
             buttonLink: item.buttonLink ?? '#contact-form',
           }))
@@ -1076,10 +1150,10 @@ const isGuidanceCardVisible = (index: number) => {
       !isLandingDataLoading &&
       Array.isArray(landingData?.entrepreneurship?.items) &&
       landingData.entrepreneurship.items.length > 0
-        ? landingData.entrepreneurship.items.slice(0, 3).map((item) => ({
+        ? landingData.entrepreneurship.items.map((item) => ({
             title: item.title ?? '',
             price: normalizePrice(item.price),
-            items: Array.isArray(item.points) ? item.points.slice(0, 5) : [],
+            items: Array.isArray(item.points) ? item.points : [],
             buttonText: item.buttonText ?? 'Купить',
             buttonLink: item.buttonLink ?? '#contact-form',
           }))
@@ -1131,13 +1205,29 @@ const isGuidanceCardVisible = (index: number) => {
       ]
     : resolvedEntrepreneurshipInfo.items
 
-  const resolvedGuidanceLoopCards = isLandingDataLoading
-    ? guidanceLoopCards
+  const guidanceVisibleCount = isGuidanceMobile ? 1 : 3
+  const guidanceCanSlide = resolvedCareerGuidanceInfo.items.length > guidanceVisibleCount
+  const guidanceCloneCount = Math.min(guidanceVisibleCount, resolvedCareerGuidanceInfo.items.length)
+  const resolvedGuidanceLoopCards = !guidanceCanSlide
+    ? resolvedCareerGuidanceInfo.items
     : [
-        ...resolvedCareerGuidanceInfo.items.slice(-3),
+        ...resolvedCareerGuidanceInfo.items.slice(-guidanceCloneCount),
         ...resolvedCareerGuidanceInfo.items,
-        ...resolvedCareerGuidanceInfo.items.slice(0, 3),
+        ...resolvedCareerGuidanceInfo.items.slice(0, guidanceCloneCount),
       ]
+
+  useEffect(() => {
+    setGuidanceIndex(guidanceCanSlide ? guidanceCloneCount : 0)
+    setIsGuidanceSliding(false)
+    setGuidanceDirection(null)
+    setIsGuidanceTransitionEnabled(false)
+
+    const frame = window.requestAnimationFrame(() => {
+      setIsGuidanceTransitionEnabled(true)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [guidanceCanSlide, guidanceCloneCount, isGuidanceMobile, resolvedCareerGuidanceInfo.items.length])
 
 useEffect(() => {
   if (bannerSlideCount <= 1) {
@@ -1205,6 +1295,7 @@ const closeMobileMenu = () => {
     logo: landingData?.footer?.logo ?? footerInfo.logo,
     addressTitle: landingData?.footer?.addressTitle ?? footerInfo.addressTitle,
     addressText: landingData?.footer?.addressText ?? footerInfo.addressText,
+    addressLink: landingData?.footer?.addressLink ?? '',
     contactTitle: landingData?.footer?.contactTitle ?? footerInfo.contactTitle,
     phone: landingData?.footer?.phone ?? footerInfo.phone,
     email: landingData?.footer?.email ?? footerInfo.email,
@@ -1442,7 +1533,12 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     ))}
   </nav>
 
-  <a href={resolvedHeaderInfo.buttonLink} className="mobile-menu__contact-button" onClick={closeMobileMenu}>
+  <a
+    href={resolvedHeaderInfo.buttonLink}
+    className="mobile-menu__contact-button"
+    onClick={closeMobileMenu}
+    {...externalLinkProps(resolvedHeaderInfo.buttonLink)}
+  >
     {resolvedHeaderInfo.buttonText}
   </a>
 </aside>
@@ -1479,7 +1575,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                 <p className="hero-text">{resolvedHeroInfo.subtitle}</p>
 
                 <div className="hero-actions">
-                  <a href={resolvedHeroInfo.buttonLink} className="button button--hero">
+                  <a
+                    href={resolvedHeroInfo.buttonLink}
+                    className="button button--hero"
+                    {...externalLinkProps(resolvedHeroInfo.buttonLink)}
+                  >
                     {resolvedHeroInfo.buttonText}
                   </a>
                 </div>
@@ -1515,6 +1615,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         </div>
       </section>
 
+      {isBannerSectionVisible ? (
       <section className="banner-section">
   <div className="container">
     <div className="banner-slider">
@@ -1541,6 +1642,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                   key={`${slide.image}-${index}`}
                   href={slide.href}
                   className="banner-slider__slide banner-slider__slide--link"
+                  {...externalLinkProps(slide.href)}
                   style={{ flex: `0 0 ${100 / bannerSlideCount}%`, width: `${100 / bannerSlideCount}%` }}
                 >
                   {slideContent}
@@ -1586,6 +1688,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     </div>
   </div>
 </section>
+      ) : null}
 
 {resolvedAboutInfo.isVisible ? (
   <section id="about" className="about-section">
@@ -1683,7 +1786,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                         ))}
                       </ul>
 
-                      <a href={card.buttonLink} className="button button--audience">
+                      <a
+                        href={card.buttonLink}
+                        className="button button--audience"
+                        {...externalLinkProps(card.buttonLink)}
+                      >
                         {card.buttonText}
                       </a>
                     </div>
@@ -1694,10 +1801,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       </section>
       ) : null}
 
+      {resolvedConsultationsInfo.isVisible ? (
       <section id="consultations" className="consultations-section">
         <div className="section-side-decor section-side-decor--consultations-right" aria-hidden="true" />
         <div className="container consultations-section__inner">
-          <h2 className="consultations-section__title">Консультации</h2>
+          <h2 className="consultations-section__title">{resolvedConsultationsInfo.title}</h2>
 
           <div className="consultations-layout">
             <div className="consultations-layout__arrow" aria-hidden="true">
@@ -1705,7 +1813,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             </div>
 
             <div className="consultations-cards">
-              {consultationCards.map((card) => (
+              {resolvedConsultationsInfo.cards.map((card) => (
                 <article
                   key={card.title}
                   className={`consultation-card consultation-card--${card.theme}`}
@@ -1717,6 +1825,14 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
+
+                  <a
+                    href={card.buttonLink}
+                    className="button button--consultation"
+                    {...externalLinkProps(card.buttonLink)}
+                  >
+                    {card.buttonText}
+                  </a>
                 </article>
               ))}
             </div>
@@ -1741,12 +1857,17 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
         </div>
       </section>
+      ) : null}
       {resolvedCareerGuidanceInfo.isVisible ? (
         <section id="guidance" className="guidance-section">
         <div className="container">
           <h2 className="guidance-section__title">{resolvedCareerGuidanceInfo.title}</h2>
 
-          <div className={`guidance-slider ${isGuidanceSliding ? 'guidance-slider--sliding' : ''}`}>
+          <div
+            className={`guidance-slider ${isGuidanceSliding ? 'guidance-slider--sliding' : ''} ${
+              !guidanceCanSlide ? 'guidance-slider--static' : ''
+            }`}
+          >
           <div className="guidance-slider__viewport">
             <div
               className={`guidance-slider__track ${
@@ -1800,7 +1921,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                         ))}
                       </ul>
 
-                      <a href={card.buttonLink} className="button button--guidance">
+                      <a
+                        href={card.buttonLink}
+                        className="button button--guidance"
+                        {...externalLinkProps(card.buttonLink)}
+                      >
                         {card.buttonText}
                       </a>
                     </>
@@ -1811,20 +1936,22 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
         </div>
 
-        <div className="guidance-slider__controls">
-          <button
-            type="button"
-            className="guidance-slider__control guidance-slider__control--prev"
-            aria-label="Предыдущие карточки"
-            onClick={goGuidancePrev}
-          />
-          <button
-            type="button"
-            className="guidance-slider__control guidance-slider__control--next"
-            aria-label="Следующие карточки"
-            onClick={goGuidanceNext}
-          />
-        </div>
+        {guidanceCanSlide ? (
+          <div className="guidance-slider__controls">
+            <button
+              type="button"
+              className="guidance-slider__control guidance-slider__control--prev"
+              aria-label="Предыдущие карточки"
+              onClick={goGuidancePrev}
+            />
+            <button
+              type="button"
+              className="guidance-slider__control guidance-slider__control--next"
+              aria-label="Следующие карточки"
+              onClick={goGuidanceNext}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   </section>
@@ -1869,7 +1996,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                 </div>
 
                 <div className="question-cta__actions">
-                  <a href={resolvedCtaInfo.buttonLink} className="question-cta__button">
+                  <a
+                    href={resolvedCtaInfo.buttonLink}
+                    className="question-cta__button"
+                    {...externalLinkProps(resolvedCtaInfo.buttonLink)}
+                  >
                     {resolvedCtaInfo.buttonText}
                   </a>
 
@@ -1879,8 +2010,7 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                       href={resolvedCtaInfo.managerLink}
                       className="question-cta__manager-link"
                       aria-label="Написать менеджеру"
-                      target={resolvedCtaInfo.managerLink.startsWith('http') ? '_blank' : undefined}
-                      rel={resolvedCtaInfo.managerLink.startsWith('http') ? 'noreferrer noopener' : undefined}
+                      {...externalLinkProps(resolvedCtaInfo.managerLink)}
                     >
                       <img
                         src={resolvedCtaInfo.managerIcon}
@@ -1948,7 +2078,11 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                     ))}
                   </ul>
 
-                  <a href={card.buttonLink} className="button button--entrepreneurship">
+                  <a
+                    href={card.buttonLink}
+                    className="button button--entrepreneurship"
+                    {...externalLinkProps(card.buttonLink)}
+                  >
                     {card.buttonText}
                   </a>
                 </>
@@ -2323,7 +2457,17 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <div className="site-footer__info">
             <div className="site-footer__column">
               <p className="site-footer__label">{resolvedFooterInfo.addressTitle}</p>
-              <p className="site-footer__text">{resolvedFooterInfo.addressText}</p>
+              {resolvedFooterInfo.addressLink ? (
+                <a
+                  href={resolvedFooterInfo.addressLink}
+                  className="site-footer__link"
+                  {...externalLinkProps(resolvedFooterInfo.addressLink)}
+                >
+                  {resolvedFooterInfo.addressText}
+                </a>
+              ) : (
+                <p className="site-footer__text">{resolvedFooterInfo.addressText}</p>
+              )}
             </div>
 
             <div className="site-footer__column">
@@ -2331,12 +2475,14 @@ const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               <a
                 href={`tel:${resolvedFooterInfo.phone.replace(/[^\d+]/g, '')}`}
                 className="site-footer__link"
+                {...externalLinkProps(resolvedFooterInfo.phone)}
               >
                 {resolvedFooterInfo.phone}
               </a>
               <a
-                href={`mailto:${resolvedFooterInfo.email}`}
+                href={normalizeEmailLink(resolvedFooterInfo.email)}
                 className="site-footer__link"
+                {...externalLinkProps(resolvedFooterInfo.email)}
               >
                 {resolvedFooterInfo.email}
               </a>
