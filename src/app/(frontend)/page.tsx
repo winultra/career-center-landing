@@ -554,7 +554,23 @@ function normalizeLandingNewsContent(content: unknown, fallback: string) {
     return content
   }
 
-  return fallback
+  const extractText = (value: unknown): string => {
+    if (typeof value === 'string') return value
+    if (Array.isArray(value)) return value.map(extractText).join('')
+    if (!value || typeof value !== 'object') return ''
+
+    const node = value as { text?: unknown; type?: unknown; children?: unknown }
+    if (typeof node.text === 'string') return node.text
+    if (!Array.isArray(node.children)) return ''
+
+    const text = node.children.map(extractText).join('')
+    return ['paragraph', 'heading', 'listitem', 'quote'].includes(String(node.type))
+      ? `${text}\n\n`
+      : text
+  }
+
+  const normalized = extractText(content).replace(/[ \t]+\n/g, '\n').trim()
+  return normalized || fallback
 }
 function normalizePrice(value: string | null | undefined) {
   const normalized = typeof value === 'string' ? value.trim() : ''

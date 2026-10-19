@@ -251,6 +251,19 @@
   line-height: 1;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(13, 35, 64, 0.12);
+  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.news-modal__close:hover {
+  transform: rotate(90deg) scale(1.08);
+  background: #0f78b4;
+  color: #ffffff;
+  box-shadow: 0 12px 26px rgba(13, 35, 64, 0.2);
+}
+
+.news-modal__close:focus-visible {
+  outline: 3px solid rgba(15, 120, 180, 0.35);
+  outline-offset: 3px;
 }
 
 .news-modal__image-wrap {
@@ -289,6 +302,7 @@
   color: #4d5d70;
   font-size: 15px;
   line-height: 1.45;
+  white-space: pre-line;
 }
 @font-face {
   font-family: 'GothamPro';
@@ -1375,7 +1389,8 @@ textarea {
   flex: 0 0 calc((var(--guidance-content-width) - (var(--guidance-card-gap) * 2)) / 3);
   min-width: 0;
   width: calc((var(--guidance-content-width) - (var(--guidance-card-gap) * 2)) / 3);
-  height: 700px;
+  height: auto;
+  min-height: 700px;
   border-radius: 18px;
   background: #ffffff;
   box-shadow:
@@ -2853,7 +2868,8 @@ textarea {
     padding: 0 0 40px;
   }
   .guidance-card {
-    height: 660px;
+    height: auto;
+    min-height: 660px;
   }
   .consultations-layout{
     left:0;
@@ -3548,14 +3564,14 @@ textarea {
   }
   .guidance-card__head {
     min-height: 124px;
-    height: 124px;
+    height: auto;
     padding: 14px 12px;
   }
   .guidance-card {
     flex: 0 0 var(--guidance-content-width);
     width: var(--guidance-content-width);
     min-height: 560px;
-    height: 560px;
+    height: auto;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
@@ -3603,12 +3619,12 @@ textarea {
 @media (max-width: 420px) {
   .guidance-card__head {
     min-height: 112px;
-    height: 112px;
+    height: auto;
   }
 
   .guidance-card {
     min-height: 520px;
-    height: 520px;
+    height: auto;
   }
 
   .guidance-card__title {
