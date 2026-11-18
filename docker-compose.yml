@@ -42,6 +42,24 @@ services:
         max-size: "1m"
         max-file: "1"
 
+  bootstrap:
+    profiles: ["tools"]
+    build:
+      context: .
+      target: bootstrap
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+        PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:16-alpine
     container_name: career-center-postgres

@@ -38,7 +38,7 @@
 cp .env.example .env.production
 docker compose --env-file .env.production build
 docker compose --env-file .env.production up -d
-docker compose --env-file .env.production run --rm app npm run bootstrap:users
+docker compose --env-file .env.production --profile tools run --rm bootstrap
 ```
 
 ### Health endpoints
@@ -86,7 +86,7 @@ server {
 Команда:
 
 ```bash
-docker compose --env-file .env.production run --rm app npm run bootstrap:users
+docker compose --env-file .env.production --profile tools run --rm bootstrap
 ```
 
 Создаются две учётки:
