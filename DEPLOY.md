@@ -56,6 +56,18 @@ docker compose --env-file .env.production --profile tools run --rm bootstrap
 - `postgres_data` для PostgreSQL
 - `./media` для Payload uploads
 
+Перед первым запуском убедитесь, что каталог загрузок доступен пользователю
+приложения внутри контейнера:
+
+```bash
+mkdir -p media
+chown -R 100:101 media
+chmod 755 media
+```
+
+Это важно при bind mount: права, заданные внутри Docker-образа, не меняют
+владельца каталога на хосте.
+
 ### nginx
 
 `nginx` на хосте должен проксировать домен на `127.0.0.1:3000`.
